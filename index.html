@@ -1,23 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡GET OUT! - Agenda des événements</title>
+    <title>¡GET OUT!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #FF6B6B;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .required-field label::after {
+            content: " *";
+            color: #FF6B6B;
+        }
+        .optional-label {
+            color: #888;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #FF6B6B;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .submit-btn:hover {
+            background: #ff5252;
+        }
+        #statusMessage {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>¡GET OUT!</h1>
-    <form>
-        <!-- Other existing fields -->
-        <label for="eventTime">Event Time:</label>
-        <input type="time" id="eventTime" name="eventTime">
-
-        <label for="eventDescription">Event Description:</label>
-        <textarea id="eventDescription" name="eventDescription"></textarea>
-
-        <label for="eventLieu">Event Lieu:</label>
-        <input type="text" id="eventLieu" name="eventLieu">
-        <!-- Other existing fields -->
-    </form>
+    <header>
+        <h1>¡GET OUT!</h1>
+    </header>
+    
+    <div class="form-container">
+        <form id="eventForm">
+            <div class="form-group required-field">
+                <label for="eventName">Nom de l'événement</label>
+                <input type="text" id="eventName" name="eventName" placeholder="Ex: Concert Jazz" required>
+            </div>
+            
+            <div class="form-group required-field">
+                <label for="eventDate">Date</label>
+                <input type="date" id="eventDate" name="eventDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="eventTime">Heure <span class="optional-label">(optionnel)</span></label>
+                <input type="time" id="eventTime" name="eventTime" placeholder="Ex: 20:00">
+            </div>
+            
+            <div class="form-group">
+                <label for="eventLieu">Lieu <span class="optional-label">(optionnel)</span></label>
+                <input type="text" id="eventLieu" name="eventLieu" placeholder="Ex: Point Éphémère, Paris">
+            </div>
+            
+            <div class="form-group">
+                <label for="eventDescription">Description <span class="optional-label">(optionnel)</span></label>
+                <textarea id="eventDescription" name="eventDescription" placeholder="Décrivez votre événement..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Ajouter l'événement</button>
+            <div id="statusMessage"></div>
+        </form>
+    </div>
+    
+    <script src="js/app.js"></script>
 </body>
 </html>
