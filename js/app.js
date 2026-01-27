@@ -1,27 +1,38 @@
-// Original code structure maintained
-
-// Debug object
-const debugGetOut = true;
+const debugGetOut = {
+    log: (message) => console.log("DEBUG:", message),
+};
 
 function triggerWorkflow() {
-    // Existing functionality
+    console.log('Triggering GitHub Actions workflow...');
+    // Code to trigger GitHub workflow (e.g., API call to GitHub Actions)
 }
 
-function showStatus() {
-    // Existing functionality
+function showStatus(message) {
+    console.log("Status: ", message);
 }
 
-function addOptionalFields(eventData) {
-    // Check optional fields and add if filled
-    if (heure) {
-        eventData.heure = heure;
-    }
-    if (description) {
-        eventData.description = description;
-    }
-    if (lieu) {
-        eventData.lieu = lieu;
-    }
-}
+document.getElementById('eventForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const heure = document.getElementById('heure').value;
+    const description = document.getElementById('description').value;
+    const lieu = document.getElementById('lieu').value;
 
-console.log('Initialisation de ¡GET OUT!');
+    const data = {
+        heure: heure ? heure : undefined,
+        description: description ? description : undefined,
+        lieu: lieu ? lieu : undefined,
+    };
+
+    // Form validation
+    if (!data.heure || !data.description || !data.lieu) {
+        showStatus('Please fill out all required fields.');
+        return;
+    }
+
+    // Process data
+    console.log("Form data ready for processing:", data);
+    triggerWorkflow();
+});
+
+console.log("🚀 Initialisation de ¡GET OUT!...\n");
