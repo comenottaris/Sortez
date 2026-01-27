@@ -6,36 +6,80 @@
     <title>¡GET OUT!</title>
     <style>
         body {
-            background-color: black;
-            color: white;
             font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #000;
             margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
             padding: 20px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .optional-fields {
-            margin: 10px 0;
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #000;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .admin-section {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>¡GET OUT!</h1>
-    </header>
-    <div class="optional-fields">
-        <label for="heure">Heure:</label>
-        <input type="text" id="heure" name="heure" placeholder="Enter hour">
+    <div class="container">
+        <h1>¡GET OUT! Application</h1>
+        <form id="event-form">
+            <label for="date">Date:</label>
+            <input type="date" id="date" required>
+            <label for="time">Time:</label>
+            <input type="time" id="time" required>
+            <label for="title">Title:</label>
+            <input type="text" id="title" required>
+            <label for="description">Description:</label>
+            <textarea id="description" required></textarea>
+            <label for="lieu">Lieu:</label>
+            <input type="text" id="lieu" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="calendar-section">
+            <h2>Calendar Events</h2>
+            <div id="events-list"></div>
+        </div>
+        <div class="admin-section" id="admin-section">
+            <h3>Admin Section</h3>
+            <button id="toggle-admin">Toggle Admin</button>
+            <div id="admin-controls">
+                <label for="auth-token">Admin Token:</label>
+                <input type="text" id="auth-token">
+                <button id="save-token">Save Token</button>
+            </div>
+        </div>
     </div>
-    <div class="optional-fields">
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" placeholder="Enter description">
-    </div>
-    <div class="optional-fields">
-        <label for="lieu">Lieu:</label>
-        <input type="text" id="lieu" name="lieu" placeholder="Enter location">
-    </div>
+    <script>
+        document.getElementById('toggle-admin').addEventListener('click', function() {
+            var adminSection = document.getElementById('admin-section');
+            adminSection.style.display = adminSection.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('save-token').addEventListener('click', function() {
+            var token = document.getElementById('auth-token').value;
+            localStorage.setItem('authToken', token);
+            alert('Token saved!');
+        });
+    </script>
 </body>
 </html>
