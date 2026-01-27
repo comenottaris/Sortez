@@ -1,0 +1,75 @@
+
+
+---
+
+
+## index.html
+
+
+```html
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cal-Heatmap — Events</title>
+<!-- Cal-Heatmap (v3) & D3 v3 via CDN -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header class="topbar">
+<h1>Mon calendrier (heatmap)</h1>
+<div class="actions">
+<button id="exportBtn" class="btn small">Exporter</button>
+<button id="importBtn" class="btn small">Importer</button>
+</div>
+</header>
+
+
+<main class="container">
+<div id="cal-heatmap"></div>
+<p class="hint">Tapez sur une cellule pour voir / ajouter des événements.</p>
+</main>
+
+
+<!-- Floating add button -->
+<button id="fab" class="fab" aria-label="Ajouter événement">＋</button>
+
+
+<!-- Add event bottom sheet -->
+<div id="sheet" class="sheet hidden" role="dialog" aria-modal="true">
+<form id="eventForm" class="sheet-form">
+<header>
+<h2>Ajouter un événement</h2>
+<button type="button" id="closeSheet" class="close">✕</button>
+</header>
+<div class="field">
+<label>Date</label>
+<input type="date" id="evtDate" required />
+</div>
+<div class="field">
+<label>Titre (optionnel)</label>
+<input type="text" id="evtTitle" placeholder="Ex: Réunion" />
+</div>
+<div class="field">
+<label>Quantité / Poids</label>
+<input type="number" id="evtCount" min="1" value="1" required />
+</div>
+<div class="sheet-actions">
+<button type="submit" class="btn primary">Enregistrer</button>
+<button type="button" id="cancelSheet" class="btn">Annuler</button>
+</div>
+</form>
+</div>
+
+
+<!-- hidden file input for import -->
+<input type="file" id="importFile" accept="application/json" style="display:none" />
+
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
