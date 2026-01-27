@@ -4,34 +4,31 @@ on:
   workflow_dispatch:
     inputs:
       payload:
-        description: "Event payload JSON"
         required: true
+        type: string
 
 jobs:
-  add-event:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Parse payload & update events.json
+      - name: Update events.json
         run: |
           mkdir -p data
-          FILE="data/events.json"
-
-          if [ ! -f "$FILE" ]; then
-            echo "[]" > "$FILE"
+          FILE=data/events.json
+          echo '${{ inputs.payload }}' > new.json
+          if [ -f "$FILE" ]; then
+            jq '. += [input]' "$FILE" new.json > tmp.json
+          else
+            jq '[input]' new.json > tmp.json
           fi
-
-          echo '${{ github.event.inputs.payload }}' > new_event.json
-
-          jq '. += [input]' "$FILE" new_event.json > tmp.json
           mv tmp.json "$FILE"
 
-      - name: Commit & push
+      - name: Commit
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add data/events.json
-          git commit -m "add event via workflow" || exit 0
+          git commit -m "Add event"
           git push
