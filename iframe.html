@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
     <title>¡GET OUT!</title>
-    
     <style>
-        *, :after, :before {
+        * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -27,31 +24,20 @@
 
         html {
             font-size: 18px;
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
             min-height: 100vh;
             padding: 0;
             margin: 0;
         }
 
-        .container {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0;
-        }
-
         .header {
             background: var(--bg);
-            padding: 1.2rem 1rem;
+            padding: 1rem;
             text-align: center;
             border-bottom: 3px solid var(--color-1);
         }
@@ -59,8 +45,6 @@
         .header h1 {
             font-size: 2rem;
             font-weight: 800;
-            letter-spacing: 0.05em;
-            color: var(--text);
         }
 
         .events-list {
@@ -69,19 +53,18 @@
         }
 
         .event-item {
-            display: flex;
-            flex-direction: column;
+            display: block;
             padding: 1.2rem 1rem;
             border-bottom: 1px solid #333;
-            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
             transition: background 0.15s ease;
         }
 
-        .event-item:active {
+        .event-item:hover {
             background: #1a1a1a;
         }
 
-        /* 5 couleurs vives alternées */
         .event-item:nth-child(5n+1) { border-left: 5px solid var(--color-1); }
         .event-item:nth-child(5n+2) { border-left: 5px solid var(--color-2); }
         .event-item:nth-child(5n+3) { border-left: 5px solid var(--color-3); }
@@ -92,7 +75,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
         }
 
         .event-day {
@@ -102,18 +85,14 @@
         }
 
         .event-month-year {
-            display: flex;
-            flex-direction: column;
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
             color: var(--text-muted);
         }
 
         .event-title {
             font-size: 1.4rem;
             font-weight: 700;
-            line-height: 1.3;
             margin-bottom: 0.4rem;
         }
 
@@ -125,136 +104,98 @@
             color: var(--text-muted);
         }
 
-        .event-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
         .event-description {
-            margin-top: 0.6rem;
+            margin-top: 0.5rem;
             font-size: 1rem;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        /* Hide elements if empty */
-        .event-time:empty,
-        .event-lieu:empty,
-        .event-description:empty {
-            display: none;
+        .event-link-btn {
+            display: inline-block;
+            margin-top: 0.6rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--color-1);
+            color: #000;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        .empty-state {
+        .loading {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 3rem;
             color: var(--text-muted);
-        }
-
-        .empty-state h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        @media (min-width: 480px) {
-            html {
-                font-size: 16px;
-            }
-            .event-day {
-                font-size: 2.5rem;
-            }
-            .event-title {
-                font-size: 1.3rem;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>¡GET OUT!</h1>
-        </header>
-        
-        <div class="events-list" id="eventsList">
-            <!-- Les événements seront chargés ici dynamiquement -->
-            
-            <!-- Exemple d'événement -->
-            <a href="#" class="event-item">
-                <div class="event-date-block">
-                    <span class="event-day">28</span>
-                    <div class="event-month-year">
-                        <span>JAN</span>
-                        <span>2026</span>
-                    </div>
-                </div>
-                <div class="event-title">Concert Jazz Électronique</div>
-                <div class="event-meta">
-                    <span class="event-time">🕐 20:00</span>
-                    <span class="event-lieu">📍 Point Éphémère</span>
-                </div>
-                <div class="event-description">Une soirée unique mêlant jazz acoustique et beats électroniques.</div>
-            </a>
-
-            <a href="#" class="event-item">
-                <div class="event-date-block">
-                    <span class="event-day">30</span>
-                    <div class="event-month-year">
-                        <span>JAN</span>
-                        <span>2026</span>
-                    </div>
-                </div>
-                <div class="event-title">Exposition Art Urbain</div>
-                <div class="event-meta">
-                    <span class="event-time">🕐 14:00</span>
-                    <span class="event-lieu">📍 Galerie Nord</span>
-                </div>
-            </a>
-
-            <a href="#" class="event-item">
-                <div class="event-date-block">
-                    <span class="event-day">02</span>
-                    <div class="event-month-year">
-                        <span>FÉV</span>
-                        <span>2026</span>
-                    </div>
-                </div>
-                <div class="event-title">Atelier Céramique</div>
-                <div class="event-meta">
-                    <span class="event-lieu">📍 Espace Créatif</span>
-                </div>
-                <div class="event-description">Apprenez les bases de la poterie dans une ambiance décontractée.</div>
-            </a>
-
-            <a href="#" class="event-item">
-                <div class="event-date-block">
-                    <span class="event-day">05</span>
-                    <div class="event-month-year">
-                        <span>FÉV</span>
-                        <span>2026</span>
-                    </div>
-                </div>
-                <div class="event-title">Soirée DJ Set</div>
-                <div class="event-meta">
-                    <span class="event-time">🕐 22:00</span>
-                </div>
-            </a>
-
-            <a href="#" class="event-item">
-                <div class="event-date-block">
-                    <span class="event-day">10</span>
-                    <div class="event-month-year">
-                        <span>FÉV</span>
-                        <span>2026</span>
-                    </div>
-                </div>
-                <div class="event-title">Projection Ciné Indé</div>
-                <div class="event-meta">
-                    <span class="event-time">🕐 19:30</span>
-                    <span class="event-lieu">📍 Salle Obscure</span>
-                </div>
-                <div class="event-description">Courts-métrages indépendants suivis d'une discussion avec les réalisateurs.</div>
-            </a>
-        </div>
+    <header class="header">
+        <h1>¡GET OUT!</h1>
+    </header>
+    
+    <div class="events-list" id="eventsList">
+        <div class="loading">Chargement des événements...</div>
     </div>
+
+    <script>
+        const MONTHS = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
+
+        async function loadEvents() {
+            try {
+                const response = await fetch('events.json');
+                const events = await response.json();
+                renderEvents(events);
+            } catch (error) {
+                console.error('Erreur chargement événements:', error);
+                document.getElementById('eventsList').innerHTML = '<div class="loading">Aucun événement trouvé</div>';
+            }
+        }
+
+        function renderEvents(events) {
+            const container = document.getElementById('eventsList');
+            
+            if (!events || events.length === 0) {
+                container.innerHTML = '<div class="loading">Aucun événement à venir</div>';
+                return;
+            }
+
+            container.innerHTML = events.map(event => {
+                const date = new Date(event.date);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = MONTHS[date.getMonth()];
+                const year = date.getFullYear();
+
+                const hasLink = event.link && event.link.trim() !== '';
+                const tag = hasLink ? 'a' : 'div';
+                const linkAttr = hasLink ? `href="${event.link}" target="_blank"` : '';
+
+                let metaHtml = '';
+                if (event.time) metaHtml += `<span>🕐 ${event.time}</span>`;
+                if (event.lieu) metaHtml += `<span>📍 ${event.lieu}</span>`;
+
+                let descHtml = '';
+                if (event.description) descHtml = `<div class="event-description">${event.description}</div>`;
+
+                let linkBtn = '';
+                if (hasLink) linkBtn = `<span class="event-link-btn">→ Plus d'infos</span>`;
+
+                return `
+                    <${tag} class="event-item" ${linkAttr}>
+                        <div class="event-date-block">
+                            <span class="event-day">${day}</span>
+                            <span class="event-month-year">${month} ${year}</span>
+                        </div>
+                        <div class="event-title">${event.name}</div>
+                        <div class="event-meta">${metaHtml}</div>
+                        ${descHtml}
+                        ${linkBtn}
+                    </${tag}>
+                `;
+            }).join('');
+        }
+
+        loadEvents();
+    </script>
 </body>
 </html>
