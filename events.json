@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Concert Jazz Électronique",
+    "date": "2026-01-28",
+    "time": "20:00",
+    "lieu": "Point Éphémère",
+    "description": "Une soirée unique mêlant jazz acoustique et beats électroniques.",
+    "link": "https://example.com/concert-jazz"
+  },
+  {
+    "id": 2,
+    "name": "Exposition Art Urbain",
+    "date": "2026-01-30",
+    "time": "14:00",
+    "lieu": "Galerie Nord",
+    "description": "",
+    "link": ""
+  },
+  {
+    "id": 3,
+    "name": "Atelier Céramique",
+    "date": "2026-02-02",
+    "time": "",
+    "lieu": "Espace Créatif",
+    "description": "Apprenez les bases de la poterie dans une ambiance décontractée.",
+    "link": "https://example.com/ceramique"
+  },
+  {
+    "id": 4,
+    "name": "Soirée DJ Set",
+    "date": "2026-02-05",
+    "time": "22:00",
+    "lieu": "",
+    "description": "",
+    "link": ""
+  },
+  {
+    "id": 5,
+    "name": "Projection Ciné Indé",
+    "date": "2026-02-10",
+    "time": "19:30",
+    "lieu": "Salle Obscure",
+    "description": "Courts-métrages indépendants suivis d'une discussion avec les réalisateurs.",
+    "link": "https://example.com/cine"
+  }
+]
