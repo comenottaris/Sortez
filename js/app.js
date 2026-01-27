@@ -2,11 +2,6 @@
 const REPO_OWNER = 'comenottaris';
 const REPO_NAME = 'Sortez';
 const WORKFLOW_FILE = 'add-event.yml';
-const EVENTS_FILE_PATH = '/data/events.json';
-
-// État global
-let calInstance = null;
-let allEvents = [];
 
 // ============================================
 // 1. INITIALISATION
@@ -15,231 +10,23 @@ let allEvents = [];
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Initialisation de Sortez...');
     
-    // Charger le token s'il existe
-    loadTokenFromStorage();
-    
-    // Charger les événements
-    loadEventsFromRepo();
-    
     // Configurer le formulaire
     setupEventForm();
-    
-    // Rafraîchir automatiquement toutes les 30 secondes
-    setInterval(loadEventsFromRepo, 30000);
 });
 
 // ============================================
-// 2. CHARGEMENT DES ÉVÉNEMENTS
-// ============================================
-
-async function loadEventsFromRepo() {
-    try {
-        console.log('📥 Chargement des événements...');
-        
-        // Ajouter un timestamp pour éviter le cache
-        const timestamp = new Date().getTime();
-        const response = await fetch(`${EVENTS_FILE_PATH}?t=${timestamp}`, {
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Erreur ${response.status}: ${response.statusText}`);
-        }
-        
-        const events = await response.json();
-        console.log(`✅ ${events.length} événement(s) chargé(s)`);
-        
-        allEvents = events;
-        
-        // Mettre à jour la heatmap
-        updateCalendar(events);
-        
-        // Afficher la liste des événements
-        renderEventsList(events);
-        
-    } catch (error) {
-        console.error('❌ Erreur lors du chargement des événements:', error);
-        showStatus('Erreur lors du chargement des événements. Vérifiez que le fichier data/events.json existe.', 'error');
-    }
-}
-
-// ============================================
-// 3. AFFICHAGE DU CALENDRIER (Cal-Heatmap)
-// ============================================
-
-function updateCalendar(events) {
-    const calData = eventsToCalData(events);
-    
-    if (calInstance) {
-        // Mettre à jour le calendrier existant
-        calInstance.update(calData);
-    } else {
-        // Créer un nouveau calendrier
-        initCalendar(calData);
-    }
-}
-
-function initCalendar(data) {
-    try {
-        calInstance = new CalHeatMap();
-        
-        // Détecter si on est sur mobile
-        const isMobile = window.innerWidth < 640;
-        
-        calInstance.init({
-            // Container
-            itemSelector: '#calendar',
-            
-            // Data
-            data: data,
-            
-            // Configuration temporelle
-            domain: 'month',
-            subDomain: 'day',
-            start: new Date(),
-            range: isMobile ? 3 : 6, // 3 mois sur mobile, 6 sur desktop
-            
-            // Affichage
-            cellSize: isMobile ? 12 : 15,
-            cellPadding: 2,
-            cellRadius: 2,
-            
-            // Légende
-            legend: [1, 3, 7, 15],
-            legendColors: {
-                min: '#f0f9ff',
-                max: '#6366f1',
-                empty: '#f1f5f9'
-            },
-            
-            // Tooltip
-            tooltip: true,
-            
-            // Labels
-            label: {
-                position: 'top',
-                width: isMobile ? 40 : 60,
-                height: 30
-            },
-            
-            // Orientation
-            verticalOrientation: false,
-            
-            // Animation
-            animationDuration: 300,
-            
-            // Callback pour le contenu du tooltip
-            subDomainTitleFormat: {
-                empty: 'Aucun événement le {date}',
-                filled: '{count} événement(s) le {date}'
-            },
-            
-            // Format de date
-            subDomainDateFormat: function(date) {
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                return date.toLocaleDateString('fr-FR', options);
-            },
-            
-            // Format du domaine (mois)
-            domainLabelFormat: function(date) {
-                const options = { month: 'long', year: 'numeric' };
-                return date.toLocaleDateString('fr-FR', options);
-            }
-        });
-        
-        console.log('📅 Calendrier initialisé');
-    } catch (error) {
-        console.error('❌ Erreur lors de l\'initialisation du calendrier:', error);
-        showStatus('Erreur lors de l\'affichage du calendrier', 'error');
-    }
-}
-
-// Convertir les événements au format Cal-Heatmap
-function eventsToCalData(events) {
-    const dataObj = {};
-    
-    events.forEach(event => {
-        try {
-            // Créer une date en UTC midnight pour éviter les problèmes de fuseau horaire
-            const dateParts = event.date.split('-');
-            const date = new Date(Date.UTC(
-                parseInt(dateParts[0]),
-                parseInt(dateParts[1]) - 1,
-                parseInt(dateParts[2])
-            ));
-            
-            // Timestamp en secondes (requis par Cal-Heatmap)
-            const timestamp = Math.floor(date.getTime() / 1000);
-            
-            // Accumuler les counts pour la même date
-            const count = Number(event.count) || 1;
-            dataObj[timestamp] = (dataObj[timestamp] || 0) + count;
-        } catch (error) {
-            console.error('Erreur lors du traitement de l\'événement:', event, error);
-        }
-    });
-    
-    return dataObj;
-}
-
-// ============================================
-// 4. AFFICHAGE DE LA LISTE DES ÉVÉNEMENTS
-// ============================================
-
-function renderEventsList(events) {
-    const container = document.getElementById('eventsList');
-    
-    if (!events || events.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p>Aucun événement pour le moment</p>
-            </div>
-        `;
-        return;
-    }
-    
-    // Trier par date (les plus récents d'abord)
-    const sortedEvents = [...events].sort((a, b) => {
-        return new Date(b.date) - new Date(a.date);
-    });
-    
-    // Limiter aux 20 événements les plus récents
-    const recentEvents = sortedEvents.slice(0, 20);
-    
-    container.innerHTML = recentEvents.map(event => {
-        const formattedDate = formatDate(event.date);
-        
-        return `
-            <div class="event-item">
-                <div class="event-date">${formattedDate}</div>
-                <div class="event-title">${escapeHtml(event.title || 'Sans titre')}</div>
-                ${event.link ? `<a href="${escapeHtml(event.link)}" class="event-link" target="_blank" rel="noopener">🔗 Voir le lien</a>` : ''}
-                ${event.image ? `<br><img src="${escapeHtml(event.image)}" class="event-image" alt="${escapeHtml(event.title || 'Event')}">` : ''}
-            </div>
-        `;
-    }).join('');
-}
-
-// ============================================
-// 5. AJOUT D'ÉVÉNEMENTS
+// 2. FORMULAIRE D'AJOUT
 // ============================================
 
 function setupEventForm() {
     const form = document.getElementById('addEventForm');
     
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await addEvent();
-    });
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addEvent();
+        });
+    }
 }
 
 async function addEvent() {
@@ -250,7 +37,12 @@ async function addEvent() {
         // Récupérer le token
         const token = localStorage.getItem('github_token');
         if (!token) {
-            showStatus('Veuillez configurer votre token GitHub dans la section Admin', 'error');
+            showStatus('⚠️ Veuillez d\'abord configurer votre token GitHub dans la section Configuration', 'error');
+            // Ouvrir automatiquement la section admin
+            const adminContent = document.getElementById('adminContent');
+            if (adminContent) {
+                adminContent.classList.add('active');
+            }
             return;
         }
         
@@ -266,7 +58,14 @@ async function addEvent() {
         
         // Validation
         if (!eventData.date || !eventData.title) {
-            showStatus('Veuillez remplir tous les champs obligatoires', 'error');
+            showStatus('⚠️ Veuillez remplir tous les champs obligatoires (date et titre)', 'error');
+            return;
+        }
+        
+        // Validation de la date
+        const selectedDate = new Date(eventData.date);
+        if (isNaN(selectedDate.getTime())) {
+            showStatus('⚠️ Date invalide', 'error');
             return;
         }
         
@@ -280,17 +79,20 @@ async function addEvent() {
         const success = await triggerWorkflow(token, eventData);
         
         if (success) {
-            showStatus('✅ Événement ajouté avec succès ! Le calendrier sera mis à jour dans quelques secondes.', 'success');
+            showStatus('✅ Événement ajouté avec succès ! Il apparaîtra dans l\'agenda d\'ici quelques secondes.', 'success');
             
             // Réinitialiser le formulaire
             document.getElementById('addEventForm').reset();
-            document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eventDate').value = today;
             document.getElementById('eventCount').value = 1;
             
-            // Recharger les événements après 5 secondes
-            setTimeout(loadEventsFromRepo, 5000);
+            // Message d'encouragement
+            setTimeout(() => {
+                showStatus('👁️ Vous pouvez voir l\'agenda public sur iframe.html', 'info');
+            }, 3000);
         } else {
-            showStatus('❌ Erreur lors de l\'ajout de l\'événement. Vérifiez votre token.', 'error');
+            showStatus('❌ Erreur lors de l\'ajout de l\'événement. Vérifiez que votre token est valide et qu\'il a les permissions "repo" et "workflow".', 'error');
         }
         
     } catch (error) {
@@ -303,12 +105,15 @@ async function addEvent() {
 }
 
 // ============================================
-// 6. INTERACTION AVEC GITHUB ACTIONS
+// 3. INTERACTION AVEC GITHUB ACTIONS
 // ============================================
 
 async function triggerWorkflow(token, eventData) {
     try {
         const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`;
+        
+        console.log('🔗 URL du workflow:', url);
+        console.log('📝 Données:', eventData);
         
         const response = await fetch(url, {
             method: 'POST',
@@ -325,10 +130,22 @@ async function triggerWorkflow(token, eventData) {
             })
         });
         
+        console.log('📡 Status de la réponse:', response.status);
+        
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Réponse GitHub:', response.status, errorText);
-            throw new Error(`GitHub API error: ${response.status}`);
+            console.error('❌ Réponse d\'erreur:', errorText);
+            
+            // Messages d'erreur plus clairs
+            if (response.status === 401) {
+                throw new Error('Token non autorisé. Vérifiez que votre token est valide.');
+            } else if (response.status === 404) {
+                throw new Error('Workflow non trouvé. Vérifiez que le fichier .github/workflows/add-event.yml existe dans le repo.');
+            } else if (response.status === 422) {
+                throw new Error('Données invalides. Vérifiez le format de vos données.');
+            } else {
+                throw new Error(`Erreur GitHub API: ${response.status}`);
+            }
         }
         
         console.log('✅ Workflow déclenché avec succès');
@@ -336,28 +153,21 @@ async function triggerWorkflow(token, eventData) {
         
     } catch (error) {
         console.error('❌ Erreur lors du déclenchement du workflow:', error);
-        return false;
+        throw error;
     }
 }
 
 // ============================================
-// 7. GESTION DU TOKEN
-// ============================================
-
-function loadTokenFromStorage() {
-    const token = localStorage.getItem('github_token');
-    if (token) {
-        document.getElementById('githubToken').value = token;
-        console.log('🔑 Token chargé depuis le stockage local');
-    }
-}
-
-// ============================================
-// 8. UTILITAIRES
+// 4. UTILITAIRES
 // ============================================
 
 function showStatus(message, type = 'info') {
     const container = document.getElementById('statusContainer');
+    
+    if (!container) {
+        console.warn('statusContainer non trouvé');
+        return;
+    }
     
     const statusDiv = document.createElement('div');
     statusDiv.className = `status-message status-${type}`;
@@ -366,67 +176,54 @@ function showStatus(message, type = 'info') {
     container.innerHTML = '';
     container.appendChild(statusDiv);
     
-    // Supprimer après 5 secondes
+    // Auto-scroll vers le message
+    statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    // Supprimer après 8 secondes
     setTimeout(() => {
-        statusDiv.remove();
-    }, 5000);
+        statusDiv.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => statusDiv.remove(), 300);
+    }, 8000);
 }
 
-function formatDate(dateString) {
-    try {
-        const date = new Date(dateString + 'T00:00:00');
-        const options = { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        };
-        return date.toLocaleDateString('fr-FR', options);
-    } catch (error) {
-        return dateString;
-    }
-}
-
-function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+// Export pour utilisation dans index.html
+window.showStatus = showStatus;
 
 // ============================================
-// 9. RESPONSIVE - Reconfigurer sur resize
-// ============================================
-
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        if (calInstance && allEvents.length > 0) {
-            // Réinitialiser le calendrier avec la nouvelle taille
-            document.getElementById('calendar').innerHTML = '';
-            calInstance = null;
-            updateCalendar(allEvents);
-        }
-    }, 250);
-});
-
-// ============================================
-// 10. DEBUG (développement uniquement)
+// 5. DEBUG (développement uniquement)
 // ============================================
 
 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     window.debugSortez = {
-        getEvents: () => allEvents,
-        getCalInstance: () => calInstance,
-        reload: loadEventsFromRepo,
+        getToken: () => localStorage.getItem('github_token'),
+        setToken: (token) => {
+            localStorage.setItem('github_token', token);
+            console.log('✅ Token défini');
+        },
         clearToken: () => {
             localStorage.removeItem('github_token');
-            console.log('Token supprimé');
+            console.log('🗑️ Token supprimé');
+        },
+        testWorkflow: async (eventData) => {
+            const token = localStorage.getItem('github_token');
+            if (!token) {
+                console.error('❌ Aucun token configuré');
+                return;
+            }
+            return await triggerWorkflow(token, eventData || {
+                date: '2026-02-01',
+                title: 'Test Event',
+                count: 1,
+                link: null,
+                image: null,
+                created_at: new Date().toISOString()
+            });
         }
     };
     console.log('🛠️ Mode debug activé. Utilisez window.debugSortez pour déboguer.');
+    console.log('Commandes disponibles:');
+    console.log('  - debugSortez.getToken()');
+    console.log('  - debugSortez.setToken("ghp_...")');
+    console.log('  - debugSortez.clearToken()');
+    console.log('  - debugSortez.testWorkflow()');
 }
