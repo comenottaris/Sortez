@@ -11,7 +11,7 @@ on:
 jobs:
   add-event:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
 
@@ -27,21 +27,21 @@ jobs:
           PAYLOAD: "${{ github.event.inputs.payload }}"
         run: |
           FILE=data/events.json
-          
+
           # Créer le fichier temporaire avec le nouvel événement
           echo "$PAYLOAD" > new_event.json
-          
+
           # Si le fichier existe, ajouter l'événement au tableau
           if [ -f "$FILE" ]; then
             jq '. += [input]' "$FILE" new_event.json > tmp.json
           else
-            # Si le fichier n'existe pas, créer un nouveau tableau avec l'événement
+            # Si le fichier n'existe pas, créer un nouveau tableau
             jq '[input]' new_event.json > tmp.json
           fi
-          
+
           # Remplacer le fichier original
           mv tmp.json "$FILE"
-          
+
           # Afficher le contenu pour debug
           echo "Contenu de $FILE:"
           cat "$FILE"
@@ -51,5 +51,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/events.json
-          git commit -m "Add event via workflow [skip ci]" || echo "No changes to commit"
+          git commit -m "Add event via workflow [skip ci]" \
+            || echo "No changes to commit"
           git push
