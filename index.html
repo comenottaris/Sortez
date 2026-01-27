@@ -3,68 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GET OUT! Application</title>
+    <title>Event Form</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="path/to/calendar.js"></script>
-    <script src="path/to/cal-heatmap.js"></script>
 </head>
 <body>
-    <header>
-        <h1>¡GET OUT!</h1>
-    </header>
-    <main>
-        <form id="event-form">
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" required>
+    <div class="admin-section">
+        <h1>Admin Section</h1>
+        <p>Token Management</p>
+        <!-- Token Management Form -->
+    </div>
+    <form id="event-form">
+        <label for="date">Date (required):</label>
+        <input type="date" id="date" name="date" required>
 
-            <label for="time">Time:</label>
-            <input type="time" id="time" name="time" required>
+        <label for="time">Time (optional):</label>
+        <input type="time" id="time" name="time">
 
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" required>
+        <label for="title">Title (required):</label>
+        <input type="text" id="title" name="title" required>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
+        <label for="description">Description (optional):</label>
+        <textarea id="description" name="description"></textarea>
 
-            <label for="lieu">Lieu:</label>
-            <input type="text" id="lieu" name="lieu" required>
+        <label for="lieu">Lieu (optional):</label>
+        <input type="text" id="lieu" name="lieu">
 
-            <label for="intensity">Intensity:</label>
-            <select id="intensity" name="intensity" required>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-            </select>
+        <label for="intensity">Intensity:</label>
+        <input type="number" id="intensity" name="intensity">
 
-            <label for="link">Link:</label>
-            <input type="url" id="link" name="link">
+        <label for="link">Link (optional):</label>
+        <input type="url" id="link" name="link">
 
-            <label for="image">Image:</label>
-            <input type="file" id="image" name="image">
+        <label for="image">Image (optional):</label>
+        <input type="file" id="image" name="image">
 
-            <button type="submit">Submit</button>
-        </form>
-        <div id="calendar"></div>
-        <script>
-            // Cal-Heatmap Initialization
-            var cal = new CalHeatMap();
-            cal.init({
-                itemSelector: "#calendar",
-                domain: "month",
-                subDomain: "day",
-                data: "path/to/data.json",
-                start: new Date(),
-            });
-        </script>
-    </main>
-    <footer>
-        <section id="admin">
-            <h2>Admin Section</h2>
-            <p>Controls for managing events</p>
-            <button>Manage Users</button>
-            <button>View Reports</button>
-        </section>
-        <p>&copy; 2026 GET OUT! Application</p>
-    </footer>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="heatmap"></div>
+
+    <script src="js/app.js"></script>
 </body>
 </html>
