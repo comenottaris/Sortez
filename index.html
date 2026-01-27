@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cal-Heatmap — Events</title>
+  <!-- Cal-Heatmap (v3) & D3 v3 via CDN -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Mon calendrier (heatmap)</h1>
+    <div class="actions">
+      <button id="exportBtn" class="btn small">Exporter</button>
+      <button id="importBtn" class="btn small">Importer</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="cal-heatmap"></div>
+    <p class="hint">Tapez sur une cellule pour voir / ajouter des événements.</p>
+
+    <!-- Liste des événements (avec image / lien) -->
+    <section id="eventsList" aria-live="polite" style="margin-top:12px">
+      <!-- remplie dynamiquement par js -->
+    </section>
+  </main>
+
+  <!-- Floating add button -->
+  <button id="fab" class="fab" aria-label="Ajouter événement">＋</button>
+
+  <!-- Add event bottom sheet -->
+  <div id="sheet" class="sheet hidden" role="dialog" aria-modal="true">
+    <form id="eventForm" class="sheet-form">
+      <header>
+        <h2>Ajouter un événement</h2>
+        <button type="button" id="closeSheet" class="close">✕</button>
+      </header>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="evtDate" required />
+      </div>
+      <div class="field">
+        <label>Titre (optionnel)</label>
+        <input type="text" id="evtTitle" placeholder="Ex: Réunion" />
+      </div>
+      <div class="field">
+        <label>Quantité / Poids</label>
+        <input type="number" id="evtCount" min="1" value="1" required />
+      </div>
+      <div class="field">
+        <label>Lien (optionnel)</label>
+        <input type="url" id="evtLink" placeholder="https://..." />
+      </div>
+      <div class="field">
+        <label>Image (URL, optionnelle)</label>
+        <input type="url" id="evtImage" placeholder="https://.../image.jpg" />
+      </div>
+
+      <!-- Optional: sync to GitHub (user must provide token & repo details) -->
+      <details style="margin-top:10px;font-size:13px">
+        <summary>Options de synchronisation GitHub (facultatif)</summary>
+        <p style="margin:8px 0;opacity:.9">Si vous voulez que l'ajout d'événements mette à jour automatiquement un fichier `events.json` dans un repo GitHub, entrez ci-dessous un token personnel et les coordonnées du repo. <strong>Attention :</strong> stocker un token côté client est peu sécurisé — préférez une API serveur ou GitHub Actions avec secrets.</p>
+        <div class="field"><label>Owner</label><input type="text" id="ghOwner" placeholder="votre-utilisateur" /></div>
+        <div class="field"><label>Repo</label><input type="text" id="ghRepo" placeholder="nom-du-repo" /></div>
+        <div class="field"><label>Path (dans le repo)</label><input type="text" id="ghPath" placeholder="data/events.json" /></div>
+        <div class="field"><label>Personal Access Token</label><input type="password" id="ghToken" placeholder="ghp_..." /></div>
+        <div style="margin-top:8px"><small style="opacity:.8">Le flux client utilisera l'API GitHub pour créer/modifier le fichier et déclenchera un `push` qui activera les workflows du repo.</small></div>
+      </details>
+
+      <div class="sheet-actions">
+        <button type="submit" class="btn primary">Enregistrer</button>
+        <button type="button" id="cancelSheet" class="btn">Annuler</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- hidden file input for import -->
+  <input type="file" id="importFile" accept="application/json" style="display:none" />
+
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <script src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
