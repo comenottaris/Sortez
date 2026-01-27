@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>Sortez - Agenda des événements</title>
+    <title>¡GET OUT! - Agenda des événements</title>
     
     <!-- Cal-Heatmap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.4/cal-heatmap.min.css">
@@ -18,24 +18,24 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
+            --primary: #000000;
+            --primary-dark: #333333;
             --success: #10b981;
             --danger: #ef4444;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --bg: #ffffff;
+            --card-bg: #f9f9f9;
+            --text: #000000;
+            --text-light: #666666;
+            --border: #d0d0d0;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             padding-bottom: 80px;
@@ -43,35 +43,35 @@
 
         /* Header */
         header {
-            background: var(--card-bg);
-            padding: 1rem;
-            box-shadow: var(--shadow);
+            background: var(--bg);
+            padding: 2rem 1rem 1rem;
+            border-bottom: 2px solid var(--primary);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--primary);
             text-align: center;
+            letter-spacing: -0.02em;
         }
 
         /* Container */
         .container {
-            max-width: 1200px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 2rem 1rem;
         }
 
         /* Calendar Container */
         .calendar-container {
             background: var(--card-bg);
-            border-radius: 12px;
+            border: 1px solid var(--border);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -84,17 +84,31 @@
         /* Add Event Section */
         .add-event-section {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
             color: var(--text);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .form-group {
@@ -103,43 +117,60 @@
 
         label {
             display: block;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--text);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        label .optional {
+            font-weight: 400;
+            text-transform: none;
+            color: var(--text-light);
+            font-size: 0.75rem;
         }
 
         input[type="text"],
         input[type="date"],
+        input[type="time"],
         input[type="url"],
         input[type="number"],
-        input[type="password"] {
+        input[type="password"],
+        textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            border: 1px solid var(--border);
             font-size: 1rem;
             transition: border-color 0.2s;
             background: var(--bg);
+            font-family: inherit;
         }
 
-        input:focus {
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
         button {
             width: 100%;
-            padding: 0.875rem;
+            padding: 1rem;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 8px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         button:active {
@@ -158,63 +189,76 @@
         /* Events List */
         .events-list {
             background: var(--card-bg);
-            border-radius: 12px;
+            border: 1px solid var(--border);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
         }
 
         .event-item {
-            padding: 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            background: var(--bg);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
         .event-item:last-child {
-            margin-bottom: 0;
+            border-bottom: none;
         }
 
         .event-date {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .event-time {
+            font-size: 0.85rem;
+            color: var(--text-light);
             margin-bottom: 0.25rem;
         }
 
         .event-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-description {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .event-lieu {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 0.5rem;
         }
 
         .event-link {
             color: var(--primary);
-            text-decoration: none;
+            text-decoration: underline;
             font-size: 0.9rem;
-            word-break: break-all;
         }
 
         .event-link:hover {
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         .event-image {
             width: 100%;
-            max-width: 200px;
-            border-radius: 6px;
-            margin-top: 0.5rem;
+            max-width: 300px;
+            margin-top: 0.75rem;
         }
 
         /* Admin Section */
         .admin-section {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
             border: 2px dashed var(--border);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .admin-toggle {
@@ -232,51 +276,31 @@
 
         /* Status Messages */
         .status-message {
-            padding: 0.75rem;
-            border-radius: 8px;
+            padding: 1rem;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            border-left: 4px solid;
+            background: var(--card-bg);
         }
 
         .status-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
+            border-color: var(--success);
+            color: var(--success);
         }
 
         .status-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
+            border-color: var(--danger);
+            color: var(--danger);
         }
 
         .status-info {
-            background: #dbeafe;
-            color: #1e40af;
-            border: 1px solid #3b82f6;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 1rem;
             color: var(--text-light);
         }
 
@@ -284,46 +308,45 @@
             width: 64px;
             height: 64px;
             margin-bottom: 1rem;
-            opacity: 0.5;
+            opacity: 0.3;
         }
 
-        /* Mobile Optimizations */
-        @media (max-width: 640px) {
-            .container {
-                padding: 0.75rem;
-            }
+        /* Loading Spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
             h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
                 font-size: 1.25rem;
             }
-
-            .calendar-container,
-            .add-event-section,
-            .events-list,
-            .admin-section {
+            
+            .container {
                 padding: 1rem;
-            }
-
-            .section-title {
-                font-size: 1.1rem;
-            }
-        }
-
-        /* Cal-Heatmap customization */
-        .cal-heatmap-container {
-            font-size: 10px;
-        }
-
-        @media (min-width: 640px) {
-            .cal-heatmap-container {
-                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>📅 Sortez</h1>
+        <h1>¡GET OUT!</h1>
     </header>
 
     <div class="container">
@@ -332,7 +355,7 @@
 
         <!-- Calendar -->
         <div class="calendar-container">
-            <h2 class="section-title">Calendrier des événements</h2>
+            <h2 class="section-title">Calendrier</h2>
             <div id="calendar"></div>
         </div>
 
@@ -340,28 +363,53 @@
         <div class="add-event-section">
             <h2 class="section-title">Ajouter un événement</h2>
             <form id="addEventForm">
-                <div class="form-group">
-                    <label for="eventDate">Date de l'événement *</label>
-                    <input type="date" id="eventDate" required>
+                <!-- Date et Heure -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventDate">Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventTime">Heure <span class="optional">(optionnel)</span></label>
+                        <input type="time" id="eventTime" placeholder="Ex: 19:00">
+                    </div>
                 </div>
 
+                <!-- Titre -->
                 <div class="form-group">
                     <label for="eventTitle">Titre *</label>
-                    <input type="text" id="eventTitle" placeholder="Ex: Vernissage, Concert..." required>
+                    <input type="text" id="eventTitle" placeholder="Ex: Vernissage, Concert, DJ Set..." required>
                 </div>
 
+                <!-- Description -->
                 <div class="form-group">
-                    <label for="eventCount">Intensité (1-10)</label>
-                    <input type="number" id="eventCount" min="1" max="10" value="1">
+                    <label for="eventDescription">Description <span class="optional">(optionnel)</span></label>
+                    <textarea id="eventDescription" placeholder="Décrivez l'événement..."></textarea>
                 </div>
 
+                <!-- Lieu -->
                 <div class="form-group">
-                    <label for="eventLink">Lien (optionnel)</label>
-                    <input type="url" id="eventLink" placeholder="https://...">
+                    <label for="eventLieu">Lieu <span class="optional">(optionnel)</span></label>
+                    <input type="text" id="eventLieu" placeholder="Ex: Point Éphémère, 200 quai de Valmy">
                 </div>
 
+                <!-- Intensité et Lien -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventCount">Intensité (1-10)</label>
+                        <input type="number" id="eventCount" min="1" max="10" value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventLink">Lien <span class="optional">(optionnel)</span></label>
+                        <input type="url" id="eventLink" placeholder="https://...">
+                    </div>
+                </div>
+
+                <!-- Image -->
                 <div class="form-group">
-                    <label for="eventImage">Image URL (optionnel)</label>
+                    <label for="eventImage">Image URL <span class="optional">(optionnel)</span></label>
                     <input type="url" id="eventImage" placeholder="https://...">
                 </div>
 
@@ -392,7 +440,7 @@
             <div id="adminContent" class="admin-content">
                 <div class="form-group">
                     <label for="githubToken">GitHub Token (stocké localement)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_...">
+                    <input type="password" id="githubToken" placeholder="ghp_..."><
                     <small style="color: var(--text-light); display: block; margin-top: 0.5rem;">
                         Token nécessaire pour ajouter des événements. Il sera stocké dans votre navigateur.
                     </small>
@@ -421,9 +469,9 @@
             const token = document.getElementById('githubToken').value.trim();
             if (token) {
                 localStorage.setItem('github_token', token);
-                showStatus('Token enregistré avec succès', 'success');
+                showStatus('✅ Token enregistré avec succès', 'success');
             } else {
-                showStatus('Veuillez entrer un token valide', 'error');
+                showStatus('⚠️ Veuillez entrer un token valide', 'error');
             }
         }
 
