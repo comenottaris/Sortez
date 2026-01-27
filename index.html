@@ -3,83 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡GET OUT!</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-            color: #000;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            padding: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        input, textarea {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #000;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .admin-section {
-            display: none;
-        }
-    </style>
+    <title>GET OUT! Application</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="path/to/calendar.js"></script>
+    <script src="path/to/cal-heatmap.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>¡GET OUT! Application</h1>
+    <header>
+        <h1>¡GET OUT!</h1>
+    </header>
+    <main>
         <form id="event-form">
             <label for="date">Date:</label>
-            <input type="date" id="date" required>
+            <input type="date" id="date" name="date" required>
+
             <label for="time">Time:</label>
-            <input type="time" id="time" required>
+            <input type="time" id="time" name="time" required>
+
             <label for="title">Title:</label>
-            <input type="text" id="title" required>
+            <input type="text" id="title" name="title" required>
+
             <label for="description">Description:</label>
-            <textarea id="description" required></textarea>
+            <textarea id="description" name="description" required></textarea>
+
             <label for="lieu">Lieu:</label>
-            <input type="text" id="lieu" required>
+            <input type="text" id="lieu" name="lieu" required>
+
+            <label for="intensity">Intensity:</label>
+            <select id="intensity" name="intensity" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+
+            <label for="link">Link:</label>
+            <input type="url" id="link" name="link">
+
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="image">
+
             <button type="submit">Submit</button>
         </form>
-        <div id="calendar-section">
-            <h2>Calendar Events</h2>
-            <div id="events-list"></div>
-        </div>
-        <div class="admin-section" id="admin-section">
-            <h3>Admin Section</h3>
-            <button id="toggle-admin">Toggle Admin</button>
-            <div id="admin-controls">
-                <label for="auth-token">Admin Token:</label>
-                <input type="text" id="auth-token">
-                <button id="save-token">Save Token</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        document.getElementById('toggle-admin').addEventListener('click', function() {
-            var adminSection = document.getElementById('admin-section');
-            adminSection.style.display = adminSection.style.display === 'none' ? 'block' : 'none';
-        });
-        document.getElementById('save-token').addEventListener('click', function() {
-            var token = document.getElementById('auth-token').value;
-            localStorage.setItem('authToken', token);
-            alert('Token saved!');
-        });
-    </script>
+        <div id="calendar"></div>
+        <script>
+            // Cal-Heatmap Initialization
+            var cal = new CalHeatMap();
+            cal.init({
+                itemSelector: "#calendar",
+                domain: "month",
+                subDomain: "day",
+                data: "path/to/data.json",
+                start: new Date(),
+            });
+        </script>
+    </main>
+    <footer>
+        <section id="admin">
+            <h2>Admin Section</h2>
+            <p>Controls for managing events</p>
+            <button>Manage Users</button>
+            <button>View Reports</button>
+        </section>
+        <p>&copy; 2026 GET OUT! Application</p>
+    </footer>
 </body>
 </html>
