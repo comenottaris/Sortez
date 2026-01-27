@@ -148,11 +148,13 @@
 
     <script>
         const MONTHS = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
+        const STORAGE_KEY = 'getout_events';
 
-        async function loadEvents() {
+        function loadEvents() {
             try {
-                const response = await fetch('events.json');
-                const events = await response.json();
+                // Lire depuis localStorage
+                const stored = localStorage.getItem(STORAGE_KEY);
+                const events = stored ? JSON.parse(stored) : [];
                 
                 // Filtrer pour n'afficher que les événements à partir d'aujourd'hui
                 const today = new Date();
@@ -214,7 +216,11 @@
             }).join('');
         }
 
+        // Charger les événements au démarrage
         loadEvents();
+        
+        // Écouter les changements de localStorage (si l'utilisateur ajoute un événement dans un autre onglet)
+        window.addEventListener('storage', loadEvents);
     </script>
 </body>
 </html>
