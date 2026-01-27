@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sortez - Agenda</title>
+    <title>¡GET OUT! - Agenda</title>
     
     <style>
         * {
@@ -13,20 +13,21 @@
         }
 
         :root {
-            --primary: #6366f1;
+            --primary: #000000;
             --bg: #ffffff;
-            --card-bg: #f8fafc;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --accent: #10b981;
+            --card-bg: #ffffff;
+            --text: #000000;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --accent: #ff3366;
+            --hover-bg: #f5f5f5;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
@@ -36,14 +37,14 @@
             height: 100vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 1rem;
+            padding: 0;
         }
 
         .header {
-            text-align: center;
-            padding: 1.5rem 0;
-            border-bottom: 2px solid var(--border);
-            margin-bottom: 1.5rem;
+            text-align: left;
+            padding: 2rem 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 0;
             position: sticky;
             top: 0;
             background: var(--bg);
@@ -51,106 +52,144 @@
         }
 
         .header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 900;
             color: var(--primary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
         }
 
         .header .subtitle {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--text-light);
+            font-weight: 400;
         }
 
-        .events-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding-bottom: 2rem;
+        .events-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .month-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 100px;
+            z-index: 5;
         }
 
         .event-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.25rem;
-            border-left: 4px solid var(--primary);
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s ease;
+            align-items: start;
         }
 
         .event-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: var(--hover-bg);
         }
 
-        .event-date {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
+        .event-date-block {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 2px solid var(--primary);
+        }
+
+        .event-day {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--primary);
+        }
+
+        .event-weekday {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .event-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .event-title {
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text);
-            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .event-title a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .event-title a:hover {
+            color: var(--accent);
         }
 
         .event-meta {
             display: flex;
-            gap: 1rem;
-            margin-top: 0.75rem;
             flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .event-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .event-meta-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .event-description {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-top: 0.5rem;
         }
 
         .event-link {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
+            gap: 0.35rem;
+            color: var(--accent);
             text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 6px;
-            transition: background 0.2s;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            transition: opacity 0.2s;
         }
 
         .event-link:hover {
-            background: rgba(99, 102, 241, 0.2);
+            opacity: 0.7;
         }
 
-        .event-image {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 8px;
-            margin-top: 1rem;
-            object-fit: cover;
-        }
-
-        .event-count {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-light);
-            padding: 0.25rem 0.75rem;
-            background: white;
-            border-radius: 6px;
-        }
-
-        .count-badge {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
+        .event-link svg {
+            width: 14px;
+            height: 14px;
         }
 
         .empty-state {
@@ -163,13 +202,14 @@
             width: 80px;
             height: 80px;
             margin-bottom: 1rem;
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
         .empty-state h2 {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: var(--text);
+            font-weight: 700;
         }
 
         .empty-state p {
@@ -178,12 +218,12 @@
 
         .loading {
             text-align: center;
-            padding: 3rem;
+            padding: 4rem;
             color: var(--text-light);
         }
 
         .spinner {
-            border: 3px solid rgba(99, 102, 241, 0.1);
+            border: 3px solid var(--border);
             border-top-color: var(--primary);
             border-radius: 50%;
             width: 40px;
@@ -196,41 +236,64 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Months separator */
-        .month-separator {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 2rem 0 1rem;
-            font-weight: 600;
-            color: var(--text);
-            font-size: 1.1rem;
-        }
-
-        .month-separator::before,
-        .month-separator::after {
-            content: '';
-            flex: 1;
-            height: 2px;
-            background: var(--border);
-        }
-
         /* Responsive */
-        @media (max-width: 640px) {
-            .container {
-                padding: 0.75rem;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
+        @media (min-width: 768px) {
+            .events-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .event-card {
+                border-right: 1px solid var(--border);
+            }
+
+            .event-card:nth-child(2n) {
+                border-right: none;
+            }
+
+            .month-header {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .events-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .event-card:nth-child(2n) {
+                border-right: 1px solid var(--border);
+            }
+
+            .event-card:nth-child(3n) {
+                border-right: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 1.5rem 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .event-card {
+                grid-template-columns: 80px 1fr;
+                gap: 1rem;
                 padding: 1rem;
+            }
+
+            .event-day {
+                font-size: 1.5rem;
             }
 
             .event-title {
                 font-size: 1.1rem;
+            }
+
+            .month-header {
+                top: 85px;
             }
         }
     </style>
@@ -238,8 +301,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 Agenda Sortez</h1>
-            <div class="subtitle">Événements à venir</div>
+            <h1>¡GET OUT!</h1>
+            <div class="subtitle">Agenda des événements</div>
         </div>
 
         <div id="eventsContainer">
@@ -251,7 +314,8 @@
     </div>
 
     <script>
-        const EVENTS_FILE = '/data/events.json';
+        // Chemin relatif pour le fichier JSON
+        const EVENTS_FILE = './data/events.json';
         
         // Charger et afficher les événements
         async function loadEvents() {
@@ -292,47 +356,91 @@
                 return;
             }
 
-            // Trier par date (du plus récent au plus ancien)
+            // Trier par date (du plus proche au plus lointain)
             const sortedEvents = [...events].sort((a, b) => {
-                return new Date(b.date) - new Date(a.date);
+                return new Date(a.date) - new Date(b.date);
             });
 
+            // Filtrer les événements passés
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const upcomingEvents = sortedEvents.filter(event => {
+                const eventDate = new Date(event.date + 'T00:00:00');
+                return eventDate >= today;
+            });
+
+            if (upcomingEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <h2>Aucun événement à venir</h2>
+                        <p>De nouveaux événements seront bientôt ajoutés</p>
+                    </div>
+                `;
+                return;
+            }
+
             // Grouper par mois
-            const eventsByMonth = groupByMonth(sortedEvents);
+            const eventsByMonth = groupByMonth(upcomingEvents);
             
             // Construire le HTML
-            let html = '<div class="events-list">';
+            let html = '<div class="events-grid">';
             
             for (const [month, monthEvents] of Object.entries(eventsByMonth)) {
-                html += `<div class="month-separator">${month}</div>`;
+                html += `<div class="month-header">${month}</div>`;
                 
                 monthEvents.forEach(event => {
-                    const formattedDate = formatDate(event.date);
-                    const count = event.count || 1;
+                    const dateInfo = formatDateInfo(event.date);
                     
                     html += `
                         <div class="event-card">
-                            <div class="event-date">${formattedDate}</div>
-                            <div class="event-title">${escapeHtml(event.title || 'Sans titre')}</div>
-                            ${event.link || event.image || count > 1 ? '<div class="event-meta">' : ''}
-                                ${event.link ? `
-                                    <a href="${escapeHtml(event.link)}" class="event-link" target="_blank" rel="noopener">
-                                        🔗 Voir le lien
-                                    </a>
-                                ` : ''}
-                                ${count > 1 ? `
-                                    <div class="event-count">
-                                        <span class="count-badge"></span>
-                                        ${count} événement${count > 1 ? 's' : ''}
+                            <div class="event-date-block">
+                                <div class="event-day">${dateInfo.day}</div>
+                                <div class="event-weekday">${dateInfo.weekday}</div>
+                            </div>
+                            <div class="event-content">
+                                <div class="event-title">
+                                    ${event.link 
+                                        ? `<a href="${escapeHtml(event.link)}" target="_blank" rel="noopener">${escapeHtml(event.title || 'Sans titre')}</a>`
+                                        : escapeHtml(event.title || 'Sans titre')
+                                    }
+                                </div>
+                                ${(event.heure || event.lieu) ? `
+                                    <div class="event-meta">
+                                        ${event.heure ? `
+                                            <span class="event-meta-item">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                ${escapeHtml(event.heure)}
+                                            </span>
+                                        ` : ''}
+                                        ${event.lieu ? `
+                                            <span class="event-meta-item">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                </svg>
+                                                ${escapeHtml(event.lieu)}
+                                            </span>
+                                        ` : ''}
                                     </div>
                                 ` : ''}
-                            ${event.link || event.image || count > 1 ? '</div>' : ''}
-                            ${event.image ? `
-                                <img src="${escapeHtml(event.image)}" 
-                                     class="event-image" 
-                                     alt="${escapeHtml(event.title || 'Event')}"
-                                     loading="lazy">
-                            ` : ''}
+                                ${event.description ? `
+                                    <div class="event-description">${escapeHtml(event.description)}</div>
+                                ` : ''}
+                                ${event.link ? `
+                                    <a href="${escapeHtml(event.link)}" class="event-link" target="_blank" rel="noopener">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                        </svg>
+                                        Plus d'infos
+                                    </a>
+                                ` : ''}
+                            </div>
                         </div>
                     `;
                 });
@@ -351,7 +459,7 @@
                 const monthKey = date.toLocaleDateString('fr-FR', { 
                     month: 'long', 
                     year: 'numeric' 
-                });
+                }).toUpperCase();
                 
                 if (!groups[monthKey]) {
                     groups[monthKey] = [];
@@ -362,18 +470,16 @@
             return groups;
         }
 
-        // Formater la date
-        function formatDate(dateString) {
+        // Formater les informations de date
+        function formatDateInfo(dateString) {
             try {
                 const date = new Date(dateString + 'T00:00:00');
-                const options = { 
-                    weekday: 'long', 
-                    day: 'numeric',
-                    month: 'long'
+                return {
+                    day: date.getDate().toString().padStart(2, '0'),
+                    weekday: date.toLocaleDateString('fr-FR', { weekday: 'short' }).toUpperCase().replace('.', '')
                 };
-                return date.toLocaleDateString('fr-FR', options);
             } catch (error) {
-                return dateString;
+                return { day: '--', weekday: '---' };
             }
         }
 
