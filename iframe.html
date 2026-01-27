@@ -47,6 +47,12 @@
             font-weight: 800;
         }
 
+        .events-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
         .events-list {
             display: flex;
             flex-direction: column;
@@ -134,8 +140,10 @@
         <h1>¡GET OUT!</h1>
     </header>
     
-    <div class="events-list" id="eventsList">
-        <div class="loading">Chargement des événements...</div>
+    <div class="events-container">
+        <div class="events-list" id="eventsList">
+            <div class="loading">Chargement des événements...</div>
+        </div>
     </div>
 
     <script>
@@ -145,7 +153,18 @@
             try {
                 const response = await fetch('events.json');
                 const events = await response.json();
-                renderEvents(events);
+                
+                // Filtrer pour n'afficher que les événements à partir d'aujourd'hui
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const upcomingEvents = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate >= today;
+                });
+                
+                renderEvents(upcomingEvents);
             } catch (error) {
                 console.error('Erreur chargement événements:', error);
                 document.getElementById('eventsList').innerHTML = '<div class="loading">Aucun événement trouvé</div>';
