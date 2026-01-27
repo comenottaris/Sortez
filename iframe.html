@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Embed — Cal-Heatmap</title>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<link rel="stylesheet" href="css/styles.css" />
+<style>
+/* force minimal styles suitable dans un iframe */
+body{margin:0;padding:12px;background:transparent}
+.topbar{display:none}
+</style>
+</head>
+<body>
+<main class="container">
+<h2 style="font-size:16px;margin:0 0 8px 0">Calendrier</h2>
+<div id="cal-heatmap"></div>
+<p style="font-size:12px;margin-top:8px;opacity:.8">Intégration iframe — swipe et toucher supportés.</p>
+</main>
+
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
