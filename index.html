@@ -3,44 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Form</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>¡GET OUT! - Agenda des événements</title>
 </head>
 <body>
-    <div class="admin-section">
-        <h1>Admin Section</h1>
-        <p>Token Management</p>
-        <!-- Token Management Form -->
-    </div>
-    <form id="event-form">
-        <label for="date">Date (required):</label>
-        <input type="date" id="date" name="date" required>
+    <h1>¡GET OUT!</h1>
+    <form>
+        <!-- Other existing fields -->
+        <label for="eventTime">Event Time:</label>
+        <input type="time" id="eventTime" name="eventTime">
 
-        <label for="time">Time (optional):</label>
-        <input type="time" id="time" name="time">
+        <label for="eventDescription">Event Description:</label>
+        <textarea id="eventDescription" name="eventDescription"></textarea>
 
-        <label for="title">Title (required):</label>
-        <input type="text" id="title" name="title" required>
-
-        <label for="description">Description (optional):</label>
-        <textarea id="description" name="description"></textarea>
-
-        <label for="lieu">Lieu (optional):</label>
-        <input type="text" id="lieu" name="lieu">
-
-        <label for="intensity">Intensity:</label>
-        <input type="number" id="intensity" name="intensity">
-
-        <label for="link">Link (optional):</label>
-        <input type="url" id="link" name="link">
-
-        <label for="image">Image (optional):</label>
-        <input type="file" id="image" name="image">
-
-        <button type="submit">Submit</button>
+        <label for="eventLieu">Event Lieu:</label>
+        <input type="text" id="eventLieu" name="eventLieu">
+        <!-- Other existing fields -->
     </form>
-    <div id="heatmap"></div>
-
-    <script src="js/app.js"></script>
 </body>
 </html>
