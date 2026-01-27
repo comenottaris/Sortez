@@ -1,4 +1,4 @@
-console.log("🚀 Initialisation de ¡GET OUT!...\n\");
+console.log("🚀 Initialisation de ¡GET OUT!...\n");
 
 const debugGetOut = {
     log: (message) => console.log("DEBUG:", message),
@@ -24,9 +24,8 @@ function getEvents() {
 
 function saveEvent(eventData) {
     const events = getEvents();
-    eventData.id = Date.now(); // ID unique basé sur le timestamp
+    eventData.id = Date.now();
     events.push(eventData);
-    // Trier par date
     events.sort((a, b) => new Date(a.date) - new Date(b.date));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
     return events;
@@ -35,35 +34,29 @@ function saveEvent(eventData) {
 document.getElementById('eventForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // Champs requis
     const eventName = document.getElementById('eventName').value.trim();
     const eventDate = document.getElementById('eventDate').value;
     
-    // Champs optionnels
     const eventTime = document.getElementById('eventTime').value;
     const eventLieu = document.getElementById('eventLieu').value.trim();
     const eventDescription = document.getElementById('eventDescription').value.trim();
     const eventLink = document.getElementById('eventLink').value.trim();
 
-    // Validation des champs requis
     if (!eventName || !eventDate) {
-        showStatus('Veuillez remplir le nom et la date de l\'événement.', true);
+        showStatus('Veuillez remplir le nom et la date de l'événement.', true);
         return;
     }
 
-    // Validation URL si remplie
     if (eventLink && !isValidUrl(eventLink)) {
-        showStatus('L\'URL du lien n\'est pas valide.', true);
+        showStatus('L'URL du lien n'est pas valide.', true);
         return;
     }
 
-    // Construction de l'objet événement
     const eventData = {
         name: eventName,
         date: eventDate
     };
 
-    // Ajout des champs optionnels seulement s'ils sont remplis
     if (eventTime) eventData.time = eventTime;
     if (eventLieu) eventData.lieu = eventLieu;
     if (eventDescription) eventData.description = eventDescription;
@@ -72,12 +65,10 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     debugGetOut.log("Données de l'événement:");
     console.log(eventData);
 
-    // Sauvegarder l'événement dans localStorage
     saveEvent(eventData);
     
     showStatus('Événement ajouté avec succès! 🎉');
 
-    // Reset form
     this.reset();
 });
 
