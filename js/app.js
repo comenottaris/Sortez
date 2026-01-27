@@ -1,8 +1,10 @@
-console.log("🚀 Initialisation de ¡GET OUT!...\n");
+console.log("🚀 Initialisation de ¡GET OUT!...\n\");
 
 const debugGetOut = {
     log: (message) => console.log("DEBUG:", message),
 };
+
+const STORAGE_KEY = 'getout_events';
 
 function showStatus(message, isError = false) {
     const statusEl = document.getElementById('statusMessage');
@@ -15,9 +17,19 @@ function showStatus(message, isError = false) {
     }, 4000);
 }
 
-function triggerWorkflow() {
-    console.log('Triggering GitHub Actions workflow...');
-    // Code to trigger GitHub workflow (e.g., API call to GitHub Actions)
+function getEvents() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+}
+
+function saveEvent(eventData) {
+    const events = getEvents();
+    eventData.id = Date.now(); // ID unique basé sur le timestamp
+    events.push(eventData);
+    // Trier par date
+    events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    return events;
 }
 
 document.getElementById('eventForm').addEventListener('submit', function(e) {
@@ -60,10 +72,10 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     debugGetOut.log("Données de l'événement:");
     console.log(eventData);
 
-    // Process data
-    console.log("Form data ready for processing:", eventData);
+    // Sauvegarder l'événement dans localStorage
+    saveEvent(eventData);
+    
     showStatus('Événement ajouté avec succès! 🎉');
-    triggerWorkflow();
 
     // Reset form
     this.reset();
