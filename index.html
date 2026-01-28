@@ -3,95 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sortez - Calendrier d'événements</title>
+    <title>SORTEZ — Agenda Culturel</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/cal-heatmap@4.2.4/dist/cal-heatmap.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/cal-heatmap@4.2.4/dist/cal-heatmap.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📅 Sortez</h1>
-            <p class="subtitle">Votre calendrier d'événements culturels</p>
-        </header>
-        
-        <!-- Section Token -->
-        <div class="token-section" id="tokenSection">
-            <div class="token-status" id="tokenStatus">⚠️ Token non configuré</div>
-            <p>Pour ajouter des événements, configurez votre token GitHub.</p>
-            <div class="toggle-section" onclick="toggleTokenConfig()">
-                🔧 Configuration du token (cliquer pour afficher/masquer)
+    <header class="site-header">
+        <div class="header-container">
+            <h1 class="site-title">SORTEZ</h1>
+            <button class="admin-toggle" onclick="toggleAdmin()">⚙️</button>
+        </div>
+    </header>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-container">
+            <h2>Administration</h2>
+            
+            <!-- Token Configuration -->
+            <div class="token-section" id="tokenSection">
+                <div class="token-status" id="tokenStatus">⚠️ Token non configuré</div>
+                <details class="config-details">
+                    <summary>🔧 Configuration du token GitHub</summary>
+                    <div class="config-content">
+                        <p class="help-text">
+                            Créez un token sur <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings</a> 
+                            avec les permissions "Actions" et "Contents" (read & write).
+                        </p>
+                        <input type="password" id="githubToken" placeholder="ghp_... ou github_pat_...">
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveToken()">💾 Enregistrer</button>
+                            <button class="btn btn-secondary" onclick="clearToken()">🗑️ Effacer</button>
+                        </div>
+                    </div>
+                </details>
             </div>
-            <div class="collapsible-content" id="tokenConfig">
-                <div class="form-group">
-                    <label for="githubToken">GitHub Personal Access Token:</label>
-                    <input type="password" id="githubToken" placeholder="ghp_... ou github_pat_...">
-                    <small>
-                        Créez un token sur <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings</a> 
-                        avec la permission "Actions: Read and write".<br>
-                        Ce token est stocké localement uniquement sur cet appareil.
-                    </small>
-                </div>
-                <button class="btn" onclick="saveToken()">💾 Enregistrer le token</button>
-                <button class="btn btn-secondary" onclick="clearToken()">🗑️ Effacer le token</button>
+
+            <!-- Add Event Form -->
+            <div class="add-event-section">
+                <h3>➕ Ajouter un événement</h3>
+                <form id="eventForm" class="event-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="eventDate">Date *</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Heure</label>
+                            <input type="time" id="eventTime" placeholder="20h00">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventName">Nom de l'événement *</label>
+                        <input type="text" id="eventName" placeholder="Concert, exposition, festival..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventType">Type d'événement</label>
+                        <select id="eventType">
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="Concert">Concert</option>
+                            <option value="Exposition">Exposition</option>
+                            <option value="Festival">Festival</option>
+                            <option value="Spectacle">Spectacle</option>
+                            <option value="Club">Club / Soirée</option>
+                            <option value="Rencontre">Rencontre / Talk</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventLieu">Lieu</label>
+                        <input type="text" id="eventLieu" placeholder="Point Éphémère, La Bellevilloise...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="3" placeholder="Détails de l'événement..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventImage">Image URL</label>
+                        <input type="url" id="eventImage" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventLink">Lien</label>
+                        <input type="url" id="eventLink" placeholder="https://example.com/event">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large" id="submitBtn">
+                        ✨ Ajouter l'événement
+                    </button>
+                </form>
+            </div>
+
+            <!-- Heatmap -->
+            <div class="heatmap-section">
+                <h3>📊 Vue d'ensemble</h3>
+                <div id="cal-heatmap"></div>
             </div>
         </div>
-
-        <div id="alertContainer"></div>
-
-        <!-- Calendrier Heatmap -->
-        <section class="calendar-section">
-            <h2>📊 Vue d'ensemble</h2>
-            <div id="cal-heatmap"></div>
-        </section>
-
-        <!-- Formulaire d'ajout d'événement -->
-        <section class="event-form">
-            <h2>➕ Ajouter un événement</h2>
-            <form id="eventForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="eventDate">Date *</label>
-                        <input type="date" id="eventDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventCount">Intensité</label>
-                        <input type="number" id="eventCount" min="1" max="10" value="1">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="eventTitle">Titre *</label>
-                    <input type="text" id="eventTitle" placeholder="Concert, exposition, festival..." required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="eventLink">Lien (optionnel)</label>
-                    <input type="url" id="eventLink" placeholder="https://example.com/event">
-                </div>
-                
-                <div class="form-group">
-                    <label for="eventImage">Image URL (optionnel)</label>
-                    <input type="url" id="eventImage" placeholder="https://example.com/image.jpg">
-                </div>
-                
-                <button type="submit" class="btn btn-primary" id="submitBtn">
-                    ✨ Ajouter l'événement
-                </button>
-            </form>
-        </section>
-
-        <!-- Liste des événements -->
-        <section class="events-list">
-            <h2>📋 Événements récents</h2>
-            <div id="eventsList"></div>
-        </section>
-
-        <footer>
-            <p>Propulsé par GitHub Actions • <a href="https://github.com/comenottaris/Sortez" target="_blank">Code source</a></p>
-        </footer>
     </div>
+
+    <!-- Alerts -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <h2 class="section-title">AGENDA</h2>
+            
+            <!-- Month Filter -->
+            <div class="month-filter" id="monthFilter"></div>
+
+            <!-- Events Grid -->
+            <div class="events-grid" id="eventsGrid">
+                <div class="loading">Chargement des événements...</div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>SORTEZ — Votre agenda culturel</p>
+        <p><a href="https://github.com/comenottaris/Sortez" target="_blank">Code source</a></p>
+    </footer>
 
     <script src="js/app.js"></script>
 </body>
