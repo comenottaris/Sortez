@@ -3,495 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sortez - Calendrier</title>
+    <title>SORTEZ — Agenda</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/cal-heatmap@4.2.4/dist/cal-heatmap.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/cal-heatmap@4.2.4/dist/cal-heatmap.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        #cal-heatmap {
-            margin: 20px 0;
-        }
-        .event-form {
-            margin: 20px 0;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #333;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        .btn {
-            background: #007bff;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .token-section {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ffc107;
-        }
-        .token-section.configured {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-        .token-status {
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .alert {
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .events-list {
-            margin-top: 30px;
-        }
-        .event-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #f9f9f9;
-            border-left: 4px solid #007bff;
-            border-radius: 4px;
-        }
-        .event-date {
-            font-weight: 600;
-            color: #007bff;
-            margin-bottom: 5px;
-        }
-        .event-title {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-        .toggle-section {
-            cursor: pointer;
-            user-select: none;
-            padding: 10px;
-            background: #e9ecef;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .toggle-section:hover {
-            background: #dee2e6;
-        }
-        .collapsible-content {
-            display: none;
-        }
-        .collapsible-content.active {
-            display: block;
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <h1>📅 Sortez - Calendrier d'événements</h1>
-        
-        <!-- Section Token -->
-        <div class="token-section" id="tokenSection">
-            <div class="token-status" id="tokenStatus">⚠️ Token non configuré</div>
-            <p>Pour ajouter des événements, vous devez configurer votre token GitHub.</p>
-            <div class="toggle-section" onclick="toggleTokenConfig()">
-                🔧 Configuration du token (cliquer pour afficher/masquer)
-            </div>
-            <div class="collapsible-content" id="tokenConfig">
-                <div class="form-group">
-                    <label for="githubToken">GitHub Personal Access Token:</label>
-                    <input type="password" id="githubToken" placeholder="ghp_...">
-                    <small style="display:block; margin-top:5px; color:#666;">
-                        Ce token est stocké localement sur votre appareil uniquement.
-                    </small>
-                </div>
-                <button class="btn" onclick="saveToken()">💾 Enregistrer le token</button>
-                <button class="btn" style="background:#dc3545; margin-left:10px;" onclick="clearToken()">🗑️ Effacer le token</button>
+<body class="iframe-mode">
+    <header class="site-header iframe-header">
+        <div class="header-container">
+            <h1 class="site-title">SORTEZ</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Month Filter -->
+            <div class="month-filter" id="monthFilter"></div>
+
+            <!-- Events Grid -->
+            <div class="events-grid" id="eventsGrid">
+                <div class="loading">Chargement des événements...</div>
             </div>
         </div>
-
-        <div id="alertContainer"></div>
-
-        <!-- Calendrier Heatmap -->
-        <div id="cal-heatmap"></div>
-
-        <!-- Formulaire d'ajout d'événement -->
-        <div class="event-form">
-            <h2>➕ Ajouter un événement</h2>
-            <form id="eventForm">
-                <div class="form-group">
-                    <label for="eventDate">Date *</label>
-                    <input type="date" id="eventDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventTitle">Titre *</label>
-                    <input type="text" id="eventTitle" placeholder="Nom de l'événement" required>
-                </div>
-                <div class="form-group">
-                    <label for="eventLink">Lien (optionnel)</label>
-                    <input type="url" id="eventLink" placeholder="https://example.com/event">
-                </div>
-                <div class="form-group">
-                    <label for="eventImage">Image URL (optionnel)</label>
-                    <input type="url" id="eventImage" placeholder="https://example.com/image.jpg">
-                </div>
-                <div class="form-group">
-                    <label for="eventCount">Intensité (1-10)</label>
-                    <input type="number" id="eventCount" min="1" max="10" value="1">
-                </div>
-                <button type="submit" class="btn" id="submitBtn">✨ Ajouter l'événement</button>
-            </form>
-        </div>
-
-        <!-- Liste des événements -->
-        <div class="events-list">
-            <h2>📋 Événements récents</h2>
-            <div id="eventsList"></div>
-        </div>
-    </div>
+    </main>
 
     <script>
-        // Configuration
         const REPO_OWNER = 'comenottaris';
         const REPO_NAME = 'Sortez';
-        const WORKFLOW_FILE = 'add-event.yml';
-        const TOKEN_KEY = 'sortez_github_token';
-        
-        let calInstance = null;
+        const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
+                        'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        const MONTHS_SHORT = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 
+                              'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
 
-        // Vérifier et afficher le statut du token au chargement
-        function checkTokenStatus() {
-            const token = localStorage.getItem(TOKEN_KEY);
-            const tokenSection = document.getElementById('tokenSection');
-            const tokenStatus = document.getElementById('tokenStatus');
-            
-            if (token && token.trim() !== '') {
-                tokenSection.classList.add('configured');
-                tokenStatus.textContent = '✅ Token configuré';
-            } else {
-                tokenSection.classList.remove('configured');
-                tokenStatus.textContent = '⚠️ Token non configuré';
-            }
-        }
+        let allEvents = [];
+        let currentMonth = null;
 
-        // Toggle de la configuration du token
-        function toggleTokenConfig() {
-            const config = document.getElementById('tokenConfig');
-            config.classList.toggle('active');
-        }
-
-        // Sauvegarder le token
-        function saveToken() {
-            const token = document.getElementById('githubToken').value.trim();
-            if (!token) {
-                showAlert('Veuillez entrer un token valide', 'error');
-                return;
-            }
-            
-            localStorage.setItem(TOKEN_KEY, token);
-            checkTokenStatus();
-            showAlert('Token enregistré avec succès!', 'success');
-            document.getElementById('githubToken').value = '';
-            document.getElementById('tokenConfig').classList.remove('active');
-        }
-
-        // Effacer le token
-        function clearToken() {
-            if (confirm('Êtes-vous sûr de vouloir effacer le token?')) {
-                localStorage.removeItem(TOKEN_KEY);
-                checkTokenStatus();
-                showAlert('Token effacé', 'success');
-            }
-        }
-
-        // Afficher une alerte
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
-            alertContainer.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        // Charger les événements depuis events.json
-        async function loadEventsFromRepo() {
+        async function loadEvents() {
             try {
                 const response = await fetch('/data/events.json', {
                     cache: 'no-store',
                     headers: {
-                        'Cache-Control': 'no-cache'
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     }
                 });
                 
                 if (!response.ok) {
-                    console.warn('events.json non trouvé, création d\'un tableau vide');
-                    return [];
+                    throw new Error('Fichier non trouvé');
                 }
                 
-                const events = await response.json();
-                updateHeatmap(events);
-                renderEventsList(events);
-                return events;
-            } catch (error) {
-                console.error('Erreur lors du chargement des événements:', error);
-                showAlert('Erreur lors du chargement des événements', 'error');
-                return [];
-            }
-        }
-
-        // Convertir les événements en données pour Cal-Heatmap
-        function eventsToCalData(events) {
-            const dataObj = {};
-            events.forEach(event => {
-                const date = new Date(event.date + 'T00:00:00');
-                const timestamp = Math.floor(date.getTime() / 1000);
-                const count = Number(event.count) || 1;
-                dataObj[timestamp] = (dataObj[timestamp] || 0) + count;
-            });
-            return dataObj;
-        }
-
-        // Mettre à jour la heatmap
-        function updateHeatmap(events) {
-            const dataObj = eventsToCalData(events);
-            
-            if (calInstance) {
-                calInstance.update(dataObj);
-            } else {
-                calInstance = new CalHeatmap();
-                calInstance.init({
-                    itemSelector: '#cal-heatmap',
-                    data: dataObj,
-                    domain: 'month',
-                    subDomain: 'day',
-                    start: new Date(new Date().getFullYear(), new Date().getMonth() - 2, 1),
-                    range: 6,
-                    cellSize: 15,
-                    cellPadding: 3,
-                    tooltip: true,
-                    legend: [1, 3, 7, 15],
-                    legendColors: {
-                        min: '#efefef',
-                        max: '#1e6823',
-                        empty: '#ededed'
-                    },
-                    label: {
-                        position: 'top'
-                    }
+                allEvents = await response.json();
+                
+                // Filter upcoming events
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                allEvents = allEvents.filter(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate >= today;
                 });
+                
+                // Sort by date
+                allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                renderMonthFilter();
+                renderEvents(allEvents);
+            } catch (error) {
+                console.error('Erreur chargement événements:', error);
+                document.getElementById('eventsGrid').innerHTML = 
+                    '<div class="loading">Aucun événement trouvé</div>';
             }
         }
 
-        // Afficher la liste des événements
-        function renderEventsList(events) {
-            const eventsList = document.getElementById('eventsList');
+        function renderMonthFilter() {
+            const monthFilter = document.getElementById('monthFilter');
+            if (!monthFilter) return;
+
+            const monthsWithEvents = new Set();
+            allEvents.forEach(event => {
+                const date = new Date(event.date);
+                const key = `${date.getFullYear()}-${date.getMonth()}`;
+                monthsWithEvents.add(key);
+            });
+
+            let html = '<button class="month-btn active" onclick="filterByMonth(null)">Tous les mois</button>';
             
-            if (!events || events.length === 0) {
-                eventsList.innerHTML = '<p style="color:#999;">Aucun événement pour le moment.</p>';
+            Array.from(monthsWithEvents).sort().forEach(key => {
+                const [year, month] = key.split('-');
+                const monthName = MONTHS[parseInt(month)];
+                html += `<button class="month-btn" onclick="filterByMonth('${key}')">${monthName} ${year}</button>`;
+            });
+
+            monthFilter.innerHTML = html;
+        }
+
+        function filterByMonth(monthKey) {
+            currentMonth = monthKey;
+            
+            // Update active button
+            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (!monthKey) {
+                renderEvents(allEvents);
                 return;
             }
-            
-            // Trier par date décroissante
-            const sortedEvents = [...events].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            ).slice(0, 10); // Afficher les 10 derniers
-            
-            eventsList.innerHTML = sortedEvents.map(event => `
-                <div class="event-item">
-                    <div class="event-date">${formatDate(event.date)}</div>
-                    <div class="event-title">${escapeHtml(event.title)}</div>
-                    ${event.link ? `<a href="${escapeHtml(event.link)}" target="_blank">🔗 Voir l'événement</a>` : ''}
-                </div>
-            `).join('');
-        }
 
-        // Formater la date
-        function formatDate(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00');
-            return date.toLocaleDateString('fr-FR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            const [year, month] = monthKey.split('-');
+            const filtered = allEvents.filter(evt => {
+                const date = new Date(evt.date);
+                return date.getFullYear() == year && date.getMonth() == month;
             });
+
+            renderEvents(filtered);
         }
 
-        // Échapper le HTML
+        function renderEvents(events) {
+            const grid = document.getElementById('eventsGrid');
+            
+            if (!events || events.length === 0) {
+                grid.innerHTML = '<div class="loading">Aucun événement à venir</div>';
+                return;
+            }
+
+            let lastMonth = null;
+            let html = '';
+
+            events.forEach(event => {
+                const date = new Date(event.date);
+                const monthYear = `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+                
+                if (monthYear !== lastMonth) {
+                    if (lastMonth !== null) {
+                        html += '</div>'; // Close previous month section
+                    }
+                    html += `<h3 class="month-divider">${monthYear}</h3><div class="month-events">`;
+                    lastMonth = monthYear;
+                }
+
+                html += renderEventCard(event);
+            });
+
+            if (lastMonth !== null) {
+                html += '</div>'; // Close last month section
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function renderEventCard(event) {
+            const date = new Date(event.date);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = MONTHS_SHORT[date.getMonth()];
+            
+            const time = event.time || '';
+            const lieu = event.lieu || '';
+            const type = event.type || '';
+            const description = event.description || '';
+            const image = event.image || '';
+            const link = event.link || '';
+
+            const hasLink = link && link.trim() !== '';
+            const tag = hasLink ? 'a' : 'div';
+            const linkAttr = hasLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : '';
+
+            return `
+                <${tag} class="event-card" ${linkAttr}>
+                    ${image ? `<div class="event-image" style="background-image: url('${escapeHtml(image)}')"></div>` : 
+                            '<div class="event-image event-image-placeholder"></div>'}
+                    <div class="event-content">
+                        <div class="event-date-badge">
+                            ${day}.${month.substring(0, 2)}${time ? `<span class="event-time">${escapeHtml(time)}</span>` : ''}
+                        </div>
+                        <h3 class="event-name">${escapeHtml(event.name || event.title)}</h3>
+                        ${type ? `<p class="event-type">${escapeHtml(type)}</p>` : ''}
+                        ${lieu ? `<p class="event-lieu">📍 ${escapeHtml(lieu)}</p>` : ''}
+                        ${description ? `<p class="event-description">${escapeHtml(description)}</p>` : ''}
+                    </div>
+                </${tag}>
+            `;
+        }
+
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Ajouter un événement via GitHub Actions
-        async function addEvent(eventData) {
-            const token = localStorage.getItem(TOKEN_KEY);
-            
-            if (!token || token.trim() === '') {
-                showAlert('Veuillez configurer votre token GitHub d\'abord', 'error');
-                document.getElementById('tokenConfig').classList.add('active');
-                return false;
-            }
-
-            try {
-                // Payload pour le workflow
-                const payload = {
-                    date: eventData.date,
-                    title: eventData.title,
-                    count: eventData.count,
-                    link: eventData.link || '',
-                    image: eventData.image || '',
-                    created_at: new Date().toISOString()
-                };
-
-                // Déclencher le workflow GitHub Actions
-                const response = await fetch(
-                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            ref: 'main',
-                            inputs: {
-                                payload: JSON.stringify(payload)
-                            }
-                        })
-                    }
-                );
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Erreur API GitHub:', response.status, errorText);
-                    
-                    if (response.status === 401) {
-                        showAlert('Token invalide ou expiré. Veuillez le reconfigurer.', 'error');
-                    } else if (response.status === 404) {
-                        showAlert('Workflow non trouvé. Vérifiez que add-event.yml existe.', 'error');
-                    } else {
-                        showAlert(`Erreur lors de l'ajout: ${response.status}`, 'error');
-                    }
-                    return false;
-                }
-
-                showAlert('✅ Événement ajouté! Le calendrier sera mis à jour dans quelques instants.', 'success');
-                
-                // Recharger les événements après un délai
-                setTimeout(() => {
-                    loadEventsFromRepo();
-                }, 3000);
-                
-                return true;
-            } catch (error) {
-                console.error('Erreur lors de l\'ajout:', error);
-                showAlert('Erreur réseau lors de l\'ajout de l\'événement', 'error');
-                return false;
-            }
-        }
-
-        // Gérer la soumission du formulaire
-        document.getElementById('eventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Ajout en cours...';
-            
-            const eventData = {
-                date: document.getElementById('eventDate').value,
-                title: document.getElementById('eventTitle').value,
-                link: document.getElementById('eventLink').value,
-                image: document.getElementById('eventImage').value,
-                count: parseInt(document.getElementById('eventCount').value) || 1
-            };
-            
-            const success = await addEvent(eventData);
-            
-            if (success) {
-                document.getElementById('eventForm').reset();
-                // Set default date to today
-                document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
-            }
-            
-            submitBtn.disabled = false;
-            submitBtn.textContent = '✨ Ajouter l\'événement';
-        });
-
-        // Initialisation
-        document.addEventListener('DOMContentLoaded', () => {
-            // Définir la date d'aujourd'hui par défaut
-            document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
-            
-            // Vérifier le statut du token
-            checkTokenStatus();
-            
-            // Charger les événements
-            loadEventsFromRepo();
-            
-            // Rafraîchir toutes les 30 secondes
-            setInterval(loadEventsFromRepo, 30000);
-        });
+        // Initialize
+        loadEvents();
+        setInterval(loadEvents, 60000); // Refresh every minute
     </script>
 </body>
 </html>
