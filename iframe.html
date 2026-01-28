@@ -331,14 +331,7 @@
                 descHtml = `<div class="event-description">${escapeHtml(description)}</div>`;
             }
 
-            // Bouton lien
-            let linkBtn = '';
-            if (hasLink) {
-                linkBtn = `<span class="event-link-btn">→ Plus d'infos</span>`;
-            }
-
-            return `
-                <${tag} class="event-item" ${linkAttr}>
+                 <${tag} class="event-item" ${linkAttr}>
                     <div class="event-date-block">
                         <span class="event-day">${day}</span>
                         <span class="event-month-year">${month} ${year}</span>
