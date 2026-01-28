@@ -34,10 +34,10 @@
   },
   {
     "date": "2026-02-06",
-    "name": "CommÃ©mor'action pour la journÃ©e mondiale de lutte contre le rÃ©gime de mort aux frontiÃ¨res",
+    "name": "CommÃÂ©mor'action pour la journÃÂ©e mondiale de lutte contre le rÃÂ©gime de mort aux frontiÃÂ¨res",
     "time": "18:00",
     "type": "",
-    "lieu": "Place de la RÃ©publique",
+    "lieu": "Place de la RÃÂ©publique",
     "description": "",
     "link": "https://www.instagram.com/p/DT-YF_0iIQS/",
     "count": 1,
@@ -45,7 +45,7 @@
   },
   {
     "date": "2026-01-31",
-    "name": "Marché silencieuse pour l'Iran - NEDA d'Iran",
+    "name": "MarchÃ© silencieuse pour l'Iran - NEDA d'Iran",
     "time": "15:00",
     "type": "",
     "lieu": "Bastille vers Hotel de ville",
@@ -53,5 +53,16 @@
     "link": "https://www.instagram.com/p/DT-iiXVjIxC/",
     "count": 1,
     "created_at": "2026-01-28T08:56:01.717Z"
+  },
+  {
+    "date": "2026-01-28",
+    "name": "Conference - Logiciels espions - un marché industriel France - Israel",
+    "time": "19:00",
+    "type": "",
+    "lieu": "La fleche d'or",
+    "description": "",
+    "link": "https://www.instagram.com/p/DTfRhdJijsP/",
+    "count": 1,
+    "created_at": "2026-01-28T09:06:07.881Z"
   }
 ]
