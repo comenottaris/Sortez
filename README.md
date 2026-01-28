@@ -1,288 +1,291 @@
-# Sortez — README
+# 📅 Sortez - Calendrier d'événements culturels
 
-Ce document décrit **tout le projet** : architecture, fichiers, installation, sécurité et usage. Il explique en particulier :
+Application web statique pour gérer et visualiser vos événements culturels via une heatmap interactive. Fonctionne avec GitHub Pages et GitHub Actions (pas de serveur externe nécessaire).
 
-* comment **connecter `data/events.json` à la Cal-Heatmap** (lecture « live » dans la page),
-* comment **afficher le calendrier dans hotglue.me** via une `iframe`,
-* comment fonctionne le **backend serverless 100 % GitHub Actions** pour ajouter les événements sans exposer de secret côté client.
+## ✨ Fonctionnalités
 
----
+- 📊 **Visualisation en heatmap** - Calendrier visuel de vos événements avec Cal-Heatmap
+- ➕ **Ajout d'événements** - Interface simple pour ajouter des événements
+- 🔒 **100% GitHub** - Pas de serveur externe, tout fonctionne via GitHub Pages et Actions
+- 📱 **Mobile-first** - Interface responsive optimisée pour mobile
+- 🔐 **Sécurisé** - Token stocké localement uniquement sur votre appareil
+- 🌐 **Iframe compatible** - Peut être intégré dans d'autres sites (hotglue.me, etc.)
 
-## Table des matières
+## 🚀 Installation rapide
 
-1. Vue d'ensemble
-2. Structure du dépôt
-3. Format `data/events.json`
-4. Flux (architecture)
-5. Installation et déploiement (pas à pas)
-6. Code : lecture live de `events.json` et conversion pour Cal-Heatmap
-7. Intégration iframe (hotglue.me)
-8. GitHub Action (backend) — fichier `add-event.yml`
-9. Sécurité & tokens
-10. Tests & troubleshooting
-11. Extensions recommandées
+### 1. Cloner ou forker le repo
 
----
-
-## 1. Vue d'ensemble
-
-Sortez est une petite application **statique** (GitHub Pages) qui affiche une heatmap calendrier (Cal-Heatmap) et permet d'ajouter des événements depuis une interface mobile-first. L'ajout d'événement se fait via un **workflow GitHub Actions** déclenché depuis le navigateur — le frontend n'écrit jamais directement dans le repo.
-
-Avantages :
-
-* zéro serveur externe (tout sur GitHub)
-* pas de secret exposé dans le repo
-* compatible iframe (hotglue.me)
-
----
-
-## 2. Structure du dépôt
-
-```
-/ (root)
-├─ index.html           # page principale (mobile-first)
-├─ iframe.html          # version minimale pour iframe
-├─ css/styles.css
-├─ js/app.js
-├─ data/events.json     # (créé/édité par GitHub Action)
-├─ README.md
-└─ .github/workflows/add-event.yml
+```bash
+git clone https://github.com/comenottaris/Sortez.git
+cd Sortez
 ```
 
-> `data/events.json` doit exister (même `[]`) avant la première écriture par l'action.
+### 2. Activer GitHub Pages
 
----
+1. Allez dans **Settings** → **Pages**
+2. Source: `Deploy from a branch`
+3. Branch: `main` / `(root)`
+4. Cliquez sur **Save**
 
-## 3. Format `data/events.json`
+Votre site sera accessible à: `https://comenottaris.github.io/Sortez/`
 
-Le fichier est un tableau d'objets JSON. Exemple :
+### 3. Créer un Personal Access Token (PAT)
+
+1. Allez sur [GitHub Settings → Tokens](https://github.com/settings/tokens)
+2. Cliquez sur **Generate new token** → **Fine-grained tokens** (recommandé)
+3. Configurez:
+   - **Token name**: `Sortez Calendar`
+   - **Repository access**: Only select repositories → `Sortez`
+   - **Permissions**:
+     - Repository permissions → Actions: **Read and write**
+     - Repository permissions → Contents: **Read and write** (pour que le workflow puisse commit)
+4. Générez et **copiez le token** (il commence par `github_pat_...`)
+
+> ⚠️ **Important**: Ne partagez JAMAIS ce token et ne le committez pas dans le repo!
+
+### 4. Configurer le token dans l'application
+
+1. Ouvrez votre site: `https://comenottaris.github.io/Sortez/`
+2. Cliquez sur "🔧 Configuration du token"
+3. Collez votre token
+4. Cliquez sur "💾 Enregistrer le token"
+
+Le token est stocké dans le `localStorage` de votre navigateur uniquement.
+
+### 5. Ajouter votre premier événement
+
+1. Remplissez le formulaire:
+   - **Date**: Choisissez une date
+   - **Titre**: Nom de l'événement
+   - **Lien** (optionnel): URL vers l'événement
+   - **Image** (optionnel): URL d'une image
+   - **Intensité**: 1-10 (affecte la couleur dans la heatmap)
+2. Cliquez sur "✨ Ajouter l'événement"
+3. Attendez quelques secondes - le workflow GitHub Actions va ajouter l'événement à `data/events.json`
+4. Le calendrier se rafraîchira automatiquement
+
+## 📁 Structure du projet
+
+```
+Sortez/
+├── .github/
+│   └── workflows/
+│       └── add-event.yml      # Workflow GitHub Actions
+├── css/
+│   └── styles.css             # Styles CSS
+├── js/
+│   └── app.js                 # JavaScript principal
+├── data/
+│   └── events.json            # Base de données JSON des événements
+├── index.html                 # Page principale
+├── iframe.html                # Version iframe (intégration)
+└── README.md                  # Ce fichier
+```
+
+## 🔧 Comment ça fonctionne
+
+### Architecture
+
+1. **Frontend** (`index.html` / `iframe.html`)
+   - Interface utilisateur
+   - Formulaire d'ajout d'événements
+   - Affichage de la heatmap avec Cal-Heatmap
+   - Stockage du token en `localStorage`
+
+2. **Backend serverless** (GitHub Actions)
+   - Workflow `.github/workflows/add-event.yml`
+   - Déclenché par l'API GitHub depuis le frontend
+   - Ajoute l'événement à `data/events.json`
+   - Commit et push automatique
+
+3. **Stockage** (`data/events.json`)
+   - Fichier JSON statique
+   - Chaque événement contient:
+     ```json
+     {
+       "date": "2026-01-28",
+       "title": "Concert de jazz",
+       "count": 3,
+       "link": "https://example.com/event",
+       "image": "https://example.com/image.jpg",
+       "created_at": "2026-01-28T12:00:00Z"
+     }
+     ```
+
+### Flux d'ajout d'un événement
+
+```
+1. Utilisateur remplit le formulaire
+        ↓
+2. JavaScript envoie une requête POST à l'API GitHub
+   POST https://api.github.com/repos/{owner}/{repo}/actions/workflows/add-event.yml/dispatches
+   Header: Authorization: Bearer {token}
+        ↓
+3. GitHub Actions exécute le workflow
+   - Parse le JSON
+   - Valide les données
+   - Ajoute à events.json
+   - Commit et push
+        ↓
+4. GitHub Pages redéploie (quelques secondes)
+        ↓
+5. Frontend recharge events.json et met à jour la heatmap
+```
+
+## 🌐 Intégration en iframe
+
+Pour intégrer le calendrier dans un autre site (comme hotglue.me):
+
+```html
+<iframe 
+  src="https://comenottaris.github.io/Sortez/iframe.html"
+  style="width:100%; height:800px; border:0;"
+  loading="lazy">
+</iframe>
+```
+
+La version `iframe.html` est identique à `index.html` mais peut être customisée si nécessaire.
+
+## 🔒 Sécurité
+
+### Pourquoi ce modèle est sécurisé
+
+1. **Token stocké localement uniquement**
+   - Le token n'est jamais committé dans le repo
+   - Il est stocké dans le `localStorage` de votre navigateur
+   - Seul vous (sur votre appareil) pouvez ajouter des événements
+
+2. **Token avec permissions limitées**
+   - Le token a uniquement accès au repo `Sortez`
+   - Il peut seulement déclencher des workflows et lire/écrire le contenu
+   - Permissions "fine-grained" recommandées
+
+3. **Workflow contrôlé**
+   - Le workflow valide toutes les données entrantes
+   - Impossible d'injecter du code malveillant
+   - Tous les commits sont tracés (audit trail)
+
+### Bonnes pratiques
+
+- ✅ Utilisez un token fine-grained avec permissions minimales
+- ✅ Régénérez le token périodiquement
+- ✅ N'utilisez ce token QUE pour Sortez
+- ❌ Ne partagez JAMAIS votre token
+- ❌ Ne committez JAMAIS le token dans le code
+
+## 🛠️ Développement local
+
+Pour développer localement:
+
+```bash
+# Installer un serveur HTTP simple
+npm install -g http-server
+
+# Lancer le serveur
+http-server -p 8080
+
+# Ouvrir http://localhost:8080
+```
+
+> Note: `fetch('/data/events.json')` ne fonctionnera qu'avec un serveur HTTP, pas en ouvrant le fichier directement.
+
+## 🐛 Dépannage
+
+### Le token ne fonctionne pas
+
+- Vérifiez que le token a les bonnes permissions (Actions: Read and write)
+- Vérifiez que le token n'est pas expiré
+- Vérifiez que vous avez accès au repo
+- Essayez de régénérer un nouveau token
+
+### L'événement n'apparaît pas
+
+1. Vérifiez que le workflow s'est bien exécuté: **Actions** tab sur GitHub
+2. Attendez 5-10 secondes que GitHub Pages redéploie
+3. Rafraîchissez la page (Ctrl+F5)
+4. Vérifiez `data/events.json` dans le repo
+
+### Le calendrier ne s'affiche pas
+
+- Vérifiez la console JavaScript (F12)
+- Vérifiez que Cal-Heatmap est bien chargé (CDN)
+- Vérifiez que `events.json` est bien formaté (valid JSON)
+
+### Erreur 404 sur le workflow
+
+- Vérifiez que le fichier `.github/workflows/add-event.yml` existe
+- Vérifiez que vous avez bien nommé le workflow `add-event.yml`
+- Vérifiez les permissions du token
+
+## 📝 Format de `events.json`
 
 ```json
 [
   {
-    "date": "2026-01-27",
-    "title": "Vernissage",
-    "count": 1,
-    "link": "https://example.com/event/123",
-    "image": "https://example.com/img.jpg",
-    "created_at": "2026-01-27T12:34:56Z"
+    "date": "2026-01-28",        // Format: YYYY-MM-DD (obligatoire)
+    "title": "Mon événement",    // Titre (obligatoire)
+    "count": 1,                  // Intensité 1-10 (défaut: 1)
+    "link": "",                  // URL optionnelle
+    "image": "",                 // URL d'image optionnelle
+    "created_at": "2026-01-28T12:00:00Z"  // Timestamp ISO
   }
 ]
 ```
 
-* `date` : `YYYY-MM-DD` (obligatoire)
-* `count` : entier ≥ 1 (détermine l'intensité sur la heatmap)
-* `link`, `image` : URL optionnelles
-* `created_at` : timestamp ISO (ajouté par le frontend/action)
+## 🎨 Personnalisation
 
----
+### Modifier les couleurs de la heatmap
 
-## 4. Flux (architecture)
-
-1. Utilisateur saisit un événement dans `index.html` (mobile).
-2. Frontend appelle l'API GitHub (`workflows/:workflow_id/dispatches`) en envoyant le JSON de l'événement. L'appel utilise un token stocké **localement** (sur l'appareil) — le token sert uniquement à déclencher le workflow.
-3. GitHub Actions `add-event.yml` récupère l'input, l'ajoute à `data/events.json`, commit & push sur la branche `main`.
-4. GitHub Pages déploie le contenu public (ou la branche `gh-pages` selon ta configuration).
-5. La page (et l'iframe) lisent `data/events.json` via `fetch()` pour afficher la heatmap.
-
----
-
-## 5. Installation et déploiement (pas à pas)
-
-1. **Cloner / push** les fichiers dans `https://github.com/comenottaris/Sortez`.
-2. Crée `data/events.json` avec `[]` et push :
-
-   ```bash
-   mkdir -p data
-   echo '[]' > data/events.json
-   git add data/events.json
-   git commit -m "chore: add empty events file"
-   git push origin main
-   ```
-3. Crée le workflow `.github/workflows/add-event.yml` (voir section 8) et push.
-4. Active GitHub Pages dans `Settings → Pages` :
-
-   * Branch : `gh-pages` or `main` (root). Si tu utilises `peaceiris/actions-gh-pages` tu peux déployer vers `gh-pages`. Pour nos besoins, déployer depuis `main` root est acceptable.
-5. Crée un Personal Access Token (PAT) **ou** un token **fine-grained** avec permission de déclencher workflows. Les détails en section 9.
-6. Sur ton téléphone, ouvre la page `index.html`, va dans la zone admin, colle le token BRUT (stockage `localStorage`). Tu n’as à le saisir qu’une fois.
-7. Test : ajoute un événement, vérifie que l'action a été déclenchée et que `data/events.json` a reçu la nouvelle entrée.
-
----
-
-## 6. Code : lecture live de `events.json` et conversion pour Cal-Heatmap
-
-Dans `js/app.js`, pour alimenter la heatmap à partir de `data/events.json`, utilisez ce pattern :
+Dans `js/app.js`, modifiez:
 
 ```javascript
-// charge events.json et met à jour Cal-Heatmap
-async function loadEventsFromRepo(){
-  try{
-    const res = await fetch('/data/events.json', {cache: 'no-store'});
-    if(!res.ok) throw new Error('events.json non trouvé');
-    const events = await res.json(); // tableau d'objets
-    const dataObj = eventsToCalData(events);
-    if(window.calInstance){
-      window.calInstance.update(dataObj, null, window.calInstance.RESET_ALL_ON_UPDATE);
-    } else {
-      window.calInstance = new CalHeatMap();
-      window.calInstance.init({
-        data: dataObj,
-        domain: 'month',
-        subDomain: 'day',
-        start: new Date(),
-        range: 6,
-        tooltip: true,
-        legend: [1,3,7,15]
-      });
-    }
-    renderEventsList(events);
-  }catch(err){ console.error(err); }
-}
-
-function eventsToCalData(events){
-  const out = {};
-  events.forEach(ev => {
-    const d = new Date(ev.date + 'T00:00:00');
-    const ts = Math.floor(d.getTime()/1000);
-    out[ts] = (out[ts] || 0) + (Number(ev.count) || 1);
-  });
-  return out;
+legendColors: {
+    min: '#efefef',    // Couleur pour les valeurs basses
+    max: '#1e6823',    // Couleur pour les valeurs hautes
+    empty: '#ededed'   // Couleur pour les jours sans événement
 }
 ```
 
-* **Remarques** :
+### Modifier le nombre de mois affichés
 
-  * `fetch('/data/events.json')` fonctionne sur GitHub Pages (fichier statique).
-  * `cache: 'no-store'` empêche les caches navigateur/CDN d'afficher d'anciennes versions.
-  * Après le commit via l'action, GitHub Pages peut mettre quelques secondes à publier la nouvelle version.
-
----
-
-## 7. Intégration iframe (hotglue.me)
-
-Utilise la `iframe.html` minimale du repo. Exemple d'embed pour hotglue.me :
-
-```html
-<iframe
-  src="https://comenottaris.github.io/Sortez/iframe.html"
-  style="width:100%;height:700px;border:0;"
-  loading="lazy"></iframe>
+```javascript
+range: 6,  // Nombre de mois à afficher
 ```
 
-* `iframe.html` doit charger la même logique JS (ou une version allégée) et lire `/data/events.json`.
-* Si Pages est configuré correctement, l'iframe affichera la heatmap publique. Si tu veux afficher l'iframe **dans une interface externe** (hotglue), il suffit de copier-coller le code ci-dessus.
+### Modifier les seuils de la légende
 
----
-
-## 8. GitHub Action (backend) — `add-event.yml`
-
-Crée le fichier suivant :
-
-```yaml
-name: Add calendar event
-
-on:
-  workflow_dispatch:
-    inputs:
-      payload:
-        description: 'Event payload JSON'
-        required: true
-        type: string
-
-jobs:
-  add-event:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Ensure data dir
-        run: mkdir -p data
-
-      - name: Append event to data/events.json
-        env:
-          PAYLOAD: "${{ github.event.inputs.payload }}"
-        run: |
-          FILE=data/events.json
-          echo "$PAYLOAD" > new.json
-
-          if [ -f "$FILE" ]; then
-            jq '. += [input]' "$FILE" new.json > tmp.json
-          else
-            jq '[input]' new.json > tmp.json
-          fi
-          mv tmp.json "$FILE"
-
-      - name: Commit & push
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add data/events.json
-          git commit -m "Add event via workflow" || echo "no changes to commit"
-          git push
+```javascript
+legend: [1, 3, 7, 15]  // Seuils pour les couleurs
 ```
 
-**Notes** :
+## 📄 Licence
 
-* Le contenu de `github.event.inputs.payload` est inséré dans `new.json` ; `jq` l'ajoute proprement au tableau.
-* Le `workflow_dispatch` peut être déclenché via l'API (`/dispatches`) depuis le frontend en envoyant le PAT.
+MIT License - Libre d'utilisation et de modification
 
----
+## 🤝 Contribution
 
-## 9. Sécurité & tokens
+Les contributions sont les bienvenues! N'hésitez pas à:
 
-### Quel token utiliser ?
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/amelioration`)
+3. Commit vos changements (`git commit -m 'Ajout nouvelle fonctionnalité'`)
+4. Push vers la branche (`git push origin feature/amelioration`)
+5. Ouvrir une Pull Request
 
-* **Fine-grained token** recommandé (GitHub) : accorde uniquement les permissions nécessaires (Actions: read & write) pour le repo `Sortez`.
-* Alternativement, un PAT classique avec scope `repo` + `workflow` fonctionne.
+## 📞 Support
 
-### Où stocker le token ?
+Si vous rencontrez des problèmes:
 
-* **Jamais** dans le repo.
-* Le frontend propose d'entrer le token sur l'appareil (stockage `localStorage`).
-* **Meilleure pratique** : utiliser un service intermédiaire ou secrets serveur si tu veux une sécurité maximale.
+1. Consultez la section [Dépannage](#-dépannage)
+2. Ouvrez une issue sur GitHub
+3. Consultez les workflows dans l'onglet Actions pour voir les erreurs
 
-### Pourquoi ce modèle est sécurisé
+## 🙏 Remerciements
 
-* Le token **ne donne pas d'accès direct** au contenu depuis d'autres appareils (sauf si quelqu'un vole ton appareil localStorage).
-* Les commits sont faits par l'Action (compte `github-actions`), et le token côté client **ne touche que l'endpoint `dispatches`**.
-
----
-
-## 10. Tests & troubleshooting
-
-* **Vérifier l'action** : dans `Actions` → sélectionne `Add calendar event` → vérifie les runs.
-* **Vérifier `data/events.json`** : après run réussi, vérifie le fichier dans le repo.
-* **Cache Pages** : GitHub Pages peut mettre quelques secondes à minutes pour refléter le commit ; pour tester localement, héberge avec `http-server`.
-* **CORS** : fetch sur le même domaine n'a pas de CORS. Si tu testes depuis un domaine différent, assure-toi que Pages autorise l'accès.
-* **JSON invalide** : si `payload` mal formé, `jq` échouera. Le frontend doit envoyer du JSON valide.
+- [Cal-Heatmap](https://cal-heatmap.com/) pour la bibliothèque de heatmap
+- [GitHub Actions](https://github.com/features/actions) pour l'infrastructure serverless
+- [GitHub Pages](https://pages.github.com/) pour l'hébergement gratuit
 
 ---
 
-## 11. Extensions recommandées
-
-* **Validation côté Action** : valider la structure JSON et renvoyer des erreurs claires.
-* **Modération** : workflow ou job séparé qui vérifie les événements avant d'ajouter.
-* **Suppression / édition** : endpoints et actions supplémentaires pour modifier ou supprimer.
-* **Diff / historique** : conserver un journal des changements (utile pour audit).
-
----
-
-## Récapitulatif rapide (pour copy-paste)
-
-* Fichier workflow : `.github/workflows/add-event.yml` (voir section 8)
-* Fichier initial `data/events.json` : `[]`
-* Frontend : `index.html` envoie `POST` à `https://api.github.com/repos/OWNER/REPO/actions/workflows/add-event.yml/dispatches`
-* Lecture live : `fetch('/data/events.json', {cache:'no-store'})`
-* Iframe hotglue : `https://OWNER.github.io/REPO/iframe.html`
-
----
-
-Si tu veux, je peux maintenant :
-
-* ajouter automatiquement ce `README.md` dans ton repo (je te fournis le contenu prêt à `git add`),
-* créer et valider le workflow complet adapté à ton repo (`Sortez`),
-* générer un script de test pour envoyer un dispatch depuis ta machine (curl).
-
-Dis-moi quelle option tu veux que j'effectue ensuite et je te fournis les fichiers / commandes immédiatement.
+Fait avec ❤️ pour organiser vos sorties culturelles
