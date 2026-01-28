@@ -287,11 +287,6 @@
                 const date = new Date(event.date);
                 const monthYear = `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
                 
-                // Ajouter un séparateur de mois
-                if (monthYear !== lastMonth) {
-                    html += `<h2 class="month-divider">${monthYear}</h2>`;
-                    lastMonth = monthYear;
-                }
 
                 html += renderEventCard(event);
             });
@@ -334,7 +329,7 @@
                  <${tag} class="event-item" ${linkAttr}>
                     <div class="event-date-block">
                         <span class="event-day">${day}</span>
-                        <span class="event-month-year">${month} ${year}</span>
+                        <span class="event-month-year">${month}</span>
                     </div>
                     <div class="event-title">${escapeHtml(title)}</div>
                     ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
