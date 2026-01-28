@@ -324,11 +324,6 @@
         descHtml = `<div class="event-description">${escapeHtml(description)}</div>`;
     }
 
-    let linkBtn = '';
-    if (hasLink) {
-        linkBtn = `<div class="event-link-btn">Voir l’événement</div>`;
-    }
-
     return `
         <${tag} class="event-item" ${linkAttr}>
             <div class="event-date-block">
@@ -338,7 +333,6 @@
             <div class="event-title">${escapeHtml(title)}</div>
             ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
             ${descHtml}
-            ${linkBtn}
         </${tag}>
     `;
 }
