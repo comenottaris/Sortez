@@ -34,13 +34,24 @@
   },
   {
     "date": "2026-02-06",
-    "name": "Commémor'action pour la journée mondiale de lutte contre le régime de mort aux frontières",
+    "name": "CommÃ©mor'action pour la journÃ©e mondiale de lutte contre le rÃ©gime de mort aux frontiÃ¨res",
     "time": "18:00",
     "type": "",
-    "lieu": "Place de la République",
+    "lieu": "Place de la RÃ©publique",
     "description": "",
     "link": "https://www.instagram.com/p/DT-YF_0iIQS/",
     "count": 1,
     "created_at": "2026-01-28T08:53:27.406Z"
+  },
+  {
+    "date": "2026-01-31",
+    "name": "Marché silencieuse pour l'Iran - NEDA d'Iran",
+    "time": "15:00",
+    "type": "",
+    "lieu": "Bastille vers Hotel de ville",
+    "description": "",
+    "link": "https://www.instagram.com/p/DT-iiXVjIxC/",
+    "count": 1,
+    "created_at": "2026-01-28T08:56:01.717Z"
   }
 ]
