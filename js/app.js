@@ -43,12 +43,12 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     const eventLink = document.getElementById('eventLink').value.trim();
 
     if (!eventName || !eventDate) {
-        showStatus('Veuillez remplir le nom et la date de l'événement.', true);
+        showStatus("Veuillez remplir le nom et la date de l'événement.", true);
         return;
     }
 
     if (eventLink && !isValidUrl(eventLink)) {
-        showStatus('L'URL du lien n'est pas valide.', true);
+        showStatus("L'URL du lien n'est pas valide.", true);
         return;
     }
 
@@ -68,6 +68,9 @@ document.getElementById('eventForm').addEventListener('submit', function(e) {
     saveEvent(eventData);
     
     showStatus('Événement ajouté avec succès! 🎉');
+    
+    // Dispatch custom event to refresh display
+    document.dispatchEvent(new CustomEvent('eventAdded'));
 
     this.reset();
 });

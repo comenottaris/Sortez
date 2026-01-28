@@ -150,21 +150,49 @@
         const MONTHS = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
         const STORAGE_KEY = 'getout_events';
 
-        function loadEvents() {
+        async function loadEvents() {
             try {
-                // Lire depuis localStorage
-                const stored = localStorage.getItem(STORAGE_KEY);
-                const events = stored ? JSON.parse(stored) : [];
+                // Load events from JSON file first
+                let jsonEvents = [];
+                try {
+                    const response = await fetch('data/events.json', { cache: 'no-store' });
+                    if (response.ok) {
+                        jsonEvents = await response.json();
+                        console.log('✓ Loaded from data/events.json:', jsonEvents.length);
+                    }
+                } catch (error) {
+                    console.log('Note: Could not load data/events.json:', error.message);
+                }
                 
-                // Filtrer pour n'afficher que les événements à partir d'aujourd'hui
+                // Load from localStorage as fallback/additional source
+                const stored = localStorage.getItem(STORAGE_KEY);
+                const localEvents = stored ? JSON.parse(stored) : [];
+                console.log('✓ Loaded from localStorage:', localEvents.length);
+                
+                // Merge both sources
+                const allEvents = [...jsonEvents, ...localEvents];
+                
+                // Remove duplicates based on date+name
+                const uniqueEvents = allEvents.reduce((acc, event) => {
+                    const key = `${event.date}-${event.name}`;
+                    if (!acc.find(e => `${e.date}-${e.name}` === key)) {
+                        acc.push(event);
+                    }
+                    return acc;
+                }, []);
+                
+                // Filter upcoming events
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
-                const upcomingEvents = events.filter(event => {
+                const upcomingEvents = uniqueEvents.filter(event => {
                     const eventDate = new Date(event.date);
                     eventDate.setHours(0, 0, 0, 0);
                     return eventDate >= today;
                 });
+                
+                // Sort by date
+                upcomingEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
                 
                 renderEvents(upcomingEvents);
             } catch (error) {
@@ -189,17 +217,22 @@
 
                 const hasLink = event.link && event.link.trim() !== '';
                 const tag = hasLink ? 'a' : 'div';
-                const linkAttr = hasLink ? `href="${event.link}" target="_blank"` : '';
+                const linkAttr = hasLink ? `href="${event.link}" target="_blank" rel="noopener noreferrer"` : '';
 
                 let metaHtml = '';
                 if (event.time) metaHtml += `<span>🕐 ${event.time}</span>`;
                 if (event.lieu) metaHtml += `<span>📍 ${event.lieu}</span>`;
 
                 let descHtml = '';
-                if (event.description) descHtml = `<div class="event-description">${event.description}</div>`;
+                if (event.description) {
+                    const escapedDesc = escapeHtml(event.description);
+                    descHtml = `<div class="event-description">${escapedDesc}</div>`;
+                }
 
                 let linkBtn = '';
                 if (hasLink) linkBtn = `<span class="event-link-btn">→ Plus d'infos</span>`;
+
+                const escapedName = escapeHtml(event.name);
 
                 return `
                     <${tag} class="event-item" ${linkAttr}>
@@ -207,7 +240,7 @@
                             <span class="event-day">${day}</span>
                             <span class="event-month-year">${month} ${year}</span>
                         </div>
-                        <div class="event-title">${event.name}</div>
+                        <div class="event-title">${escapedName}</div>
                         <div class="event-meta">${metaHtml}</div>
                         ${descHtml}
                         ${linkBtn}
@@ -216,10 +249,16 @@
             }).join('');
         }
 
-        // Charger les événements au démarrage
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load events on startup
         loadEvents();
         
-        // Écouter les changements de localStorage (si l'utilisateur ajoute un événement dans un autre onglet)
+        // Listen for storage changes
         window.addEventListener('storage', loadEvents);
     </script>
 </body>
