@@ -1,14 +1,33 @@
-// Configuration
+// ========================================
+// CONFIGURATION
+// ========================================
+
 const REPO_OWNER = 'comenottaris';
 const REPO_NAME = 'Sortez';
 const WORKFLOW_FILE = 'add-event.yml';
 const TOKEN_KEY = 'sortez_github_token';
 
-let calInstance = null;
+const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
+                'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+const MONTHS_SHORT = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 
+                      'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
 
-// ============================================================
-// GESTION DU TOKEN
-// ============================================================
+let calInstance = null;
+let allEvents = [];
+let currentMonth = null;
+
+// ========================================
+// ADMIN PANEL
+// ========================================
+
+function toggleAdmin() {
+    const panel = document.getElementById('adminPanel');
+    panel.classList.toggle('active');
+}
+
+// ========================================
+// TOKEN MANAGEMENT
+// ========================================
 
 function checkTokenStatus() {
     const token = localStorage.getItem(TOKEN_KEY);
@@ -24,11 +43,6 @@ function checkTokenStatus() {
     }
 }
 
-function toggleTokenConfig() {
-    const config = document.getElementById('tokenConfig');
-    config.classList.toggle('active');
-}
-
 function saveToken() {
     const token = document.getElementById('githubToken').value.trim();
     if (!token) {
@@ -36,7 +50,6 @@ function saveToken() {
         return;
     }
     
-    // Validation basique du format du token
     if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
         showAlert('Le token doit commencer par "ghp_" ou "github_pat_"', 'error');
         return;
@@ -46,7 +59,6 @@ function saveToken() {
     checkTokenStatus();
     showAlert('Token enregistré avec succès! 🎉', 'success');
     document.getElementById('githubToken').value = '';
-    document.getElementById('tokenConfig').classList.remove('active');
 }
 
 function clearToken() {
@@ -57,12 +69,14 @@ function clearToken() {
     }
 }
 
-// ============================================================
-// AFFICHAGE DES ALERTES
-// ============================================================
+// ========================================
+// ALERTS
+// ========================================
 
 function showAlert(message, type) {
     const alertContainer = document.getElementById('alertContainer');
+    if (!alertContainer) return;
+
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
     alert.textContent = message;
@@ -75,11 +89,11 @@ function showAlert(message, type) {
     }, 5000);
 }
 
-// ============================================================
-// CHARGEMENT DES ÉVÉNEMENTS
-// ============================================================
+// ========================================
+// LOAD EVENTS
+// ========================================
 
-async function loadEventsFromRepo() {
+async function loadEvents() {
     try {
         const response = await fetch('/data/events.json', {
             cache: 'no-store',
@@ -90,46 +104,174 @@ async function loadEventsFromRepo() {
         });
         
         if (!response.ok) {
-            console.warn('events.json non trouvé ou erreur de chargement');
-            updateHeatmap([]);
-            renderEventsList([]);
-            return [];
+            throw new Error('Fichier non trouvé');
         }
         
-        const events = await response.json();
-        console.log(`${events.length} événement(s) chargé(s)`);
+        allEvents = await response.json();
+        console.log(`${allEvents.length} événement(s) chargé(s)`);
         
-        updateHeatmap(events);
-        renderEventsList(events);
-        return events;
+        // Filter upcoming events
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        allEvents = allEvents.filter(event => {
+            const eventDate = new Date(event.date);
+            eventDate.setHours(0, 0, 0, 0);
+            return eventDate >= today;
+        });
+        
+        // Sort by date
+        allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        renderMonthFilter();
+        renderEvents(allEvents);
+        
+        if (calInstance) {
+            updateHeatmap(allEvents);
+        }
     } catch (error) {
-        console.error('Erreur lors du chargement des événements:', error);
-        updateHeatmap([]);
-        renderEventsList([]);
-        return [];
+        console.error('Erreur chargement événements:', error);
+        document.getElementById('eventsGrid').innerHTML = 
+            '<div class="loading">Aucun événement trouvé</div>';
     }
 }
 
-// ============================================================
-// CONVERSION DES DONNÉES POUR CAL-HEATMAP
-// ============================================================
+// ========================================
+// MONTH FILTER
+// ========================================
+
+function renderMonthFilter() {
+    const monthFilter = document.getElementById('monthFilter');
+    if (!monthFilter) return;
+
+    const monthsWithEvents = new Set();
+    allEvents.forEach(event => {
+        const date = new Date(event.date);
+        const key = `${date.getFullYear()}-${date.getMonth()}`;
+        monthsWithEvents.add(key);
+    });
+
+    let html = '<button class="month-btn active" onclick="filterByMonth(null)">Tous les mois</button>';
+    
+    Array.from(monthsWithEvents).sort().forEach(key => {
+        const [year, month] = key.split('-');
+        const monthName = MONTHS[parseInt(month)];
+        html += `<button class="month-btn" onclick="filterByMonth('${key}')">${monthName} ${year}</button>`;
+    });
+
+    monthFilter.innerHTML = html;
+}
+
+function filterByMonth(monthKey) {
+    currentMonth = monthKey;
+    
+    // Update active button
+    document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (!monthKey) {
+        renderEvents(allEvents);
+        return;
+    }
+
+    const [year, month] = monthKey.split('-');
+    const filtered = allEvents.filter(evt => {
+        const date = new Date(evt.date);
+        return date.getFullYear() == year && date.getMonth() == month;
+    });
+
+    renderEvents(filtered);
+}
+
+// ========================================
+// RENDER EVENTS
+// ========================================
+
+function renderEvents(events) {
+    const grid = document.getElementById('eventsGrid');
+    
+    if (!events || events.length === 0) {
+        grid.innerHTML = '<div class="loading">Aucun événement à venir</div>';
+        return;
+    }
+
+    let lastMonth = null;
+    let html = '';
+
+    events.forEach(event => {
+        const date = new Date(event.date);
+        const monthYear = `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+        
+        if (monthYear !== lastMonth) {
+            if (lastMonth !== null) {
+                html += '</div>'; // Close previous month section
+            }
+            html += `<h3 class="month-divider">${monthYear}</h3><div class="month-events">`;
+            lastMonth = monthYear;
+        }
+
+        html += renderEventCard(event);
+    });
+
+    if (lastMonth !== null) {
+        html += '</div>'; // Close last month section
+    }
+
+    grid.innerHTML = html;
+}
+
+function renderEventCard(event) {
+    const date = new Date(event.date);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = MONTHS_SHORT[date.getMonth()];
+    
+    const time = event.time || '';
+    const lieu = event.lieu || '';
+    const type = event.type || '';
+    const description = event.description || '';
+    const image = event.image || '';
+    const link = event.link || '';
+
+    const hasLink = link && link.trim() !== '';
+    const tag = hasLink ? 'a' : 'div';
+    const linkAttr = hasLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : '';
+
+    return `
+        <${tag} class="event-card" ${linkAttr}>
+            ${image ? `<div class="event-image" style="background-image: url('${escapeHtml(image)}')"></div>` : 
+                    '<div class="event-image event-image-placeholder"></div>'}
+            <div class="event-content">
+                <div class="event-date-badge">
+                    ${day}.${month.substring(0, 2)}${time ? `<span class="event-time">${escapeHtml(time)}</span>` : ''}
+                </div>
+                <h3 class="event-name">${escapeHtml(event.name || event.title)}</h3>
+                ${type ? `<p class="event-type">${escapeHtml(type)}</p>` : ''}
+                ${lieu ? `<p class="event-lieu">📍 ${escapeHtml(lieu)}</p>` : ''}
+                ${description ? `<p class="event-description">${escapeHtml(description)}</p>` : ''}
+            </div>
+        </${tag}>
+    `;
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ========================================
+// HEATMAP
+// ========================================
 
 function eventsToCalData(events) {
     const dataObj = {};
     
     events.forEach(event => {
-        if (!event.date) {
-            console.warn('Événement sans date:', event);
-            return;
-        }
+        if (!event.date) return;
         
-        // Créer la date en forçant le fuseau horaire UTC pour éviter les problèmes
         const date = new Date(event.date + 'T00:00:00Z');
-        
-        if (isNaN(date.getTime())) {
-            console.warn('Date invalide:', event.date);
-            return;
-        }
+        if (isNaN(date.getTime())) return;
         
         const timestamp = Math.floor(date.getTime() / 1000);
         const count = Number(event.count) || 1;
@@ -140,19 +282,15 @@ function eventsToCalData(events) {
     return dataObj;
 }
 
-// ============================================================
-// MISE À JOUR DE LA HEATMAP
-// ============================================================
-
 function updateHeatmap(events) {
+    if (!document.getElementById('cal-heatmap')) return;
+
     const dataObj = eventsToCalData(events);
     
     if (calInstance) {
-        // Mettre à jour les données existantes
         calInstance.update(dataObj);
     } else {
-        // Initialiser la heatmap
-        calInstance = new CalHeatMap();
+        calInstance = new CalHeatmap();
         
         const now = new Date();
         const startDate = new Date(now.getFullYear(), now.getMonth() - 2, 1);
@@ -169,9 +307,9 @@ function updateHeatmap(events) {
             tooltip: true,
             legend: [1, 3, 7, 15],
             legendColors: {
-                min: '#efefef',
-                max: '#1e6823',
-                empty: '#ededed'
+                min: '#333333',
+                max: '#FF6B6B',
+                empty: '#1a1a1a'
             },
             label: {
                 position: 'top'
@@ -183,91 +321,39 @@ function updateHeatmap(events) {
     }
 }
 
-// ============================================================
-// AFFICHAGE DE LA LISTE DES ÉVÉNEMENTS
-// ============================================================
-
-function renderEventsList(events) {
-    const eventsList = document.getElementById('eventsList');
-    
-    if (!events || events.length === 0) {
-        eventsList.innerHTML = '<p style="color:#999; text-align:center; padding:20px;">Aucun événement pour le moment. Ajoutez-en un! 🎭</p>';
-        return;
-    }
-    
-    // Trier par date décroissante (les plus récents d'abord)
-    const sortedEvents = [...events].sort((a, b) => 
-        new Date(b.date) - new Date(a.date)
-    ).slice(0, 20); // Afficher les 20 derniers
-    
-    eventsList.innerHTML = sortedEvents.map(event => {
-        const eventLink = event.link ? 
-            `<div><a href="${escapeHtml(event.link)}" target="_blank" rel="noopener noreferrer">🔗 Voir l'événement</a></div>` : 
-            '';
-        
-        return `
-            <div class="event-item">
-                <div class="event-date">${formatDate(event.date)}</div>
-                <div class="event-title">${escapeHtml(event.title)}</div>
-                ${eventLink}
-            </div>
-        `;
-    }).join('');
-}
-
-// ============================================================
-// FORMATAGE
-// ============================================================
-
-function formatDate(dateStr) {
-    try {
-        const date = new Date(dateStr + 'T00:00:00');
-        return date.toLocaleDateString('fr-FR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch (error) {
-        return dateStr;
-    }
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// ============================================================
-// AJOUT D'ÉVÉNEMENT VIA GITHUB ACTIONS
-// ============================================================
+// ========================================
+// ADD EVENT
+// ========================================
 
 async function addEvent(eventData) {
     const token = localStorage.getItem(TOKEN_KEY);
     
     if (!token || token.trim() === '') {
         showAlert('❌ Veuillez configurer votre token GitHub d\'abord', 'error');
-        document.getElementById('tokenConfig').classList.add('active');
+        const adminPanel = document.getElementById('adminPanel');
+        if (adminPanel && !adminPanel.classList.contains('active')) {
+            adminPanel.classList.add('active');
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return false;
     }
 
     try {
-        // Construire le payload
         const payload = {
             date: eventData.date,
-            title: eventData.title,
-            count: eventData.count,
-            link: eventData.link || '',
+            name: eventData.name,
+            time: eventData.time || '',
+            type: eventData.type || '',
+            lieu: eventData.lieu || '',
+            description: eventData.description || '',
             image: eventData.image || '',
+            link: eventData.link || '',
+            count: 1,
             created_at: new Date().toISOString()
         };
 
         console.log('Envoi de l\'événement:', payload);
 
-        // Déclencher le workflow GitHub Actions
         const response = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`,
             {
@@ -296,20 +382,19 @@ async function addEvent(eventData) {
             });
             
             if (response.status === 401 || response.status === 403) {
-                showAlert('❌ Token invalide ou sans les permissions nécessaires. Vérifiez votre token.', 'error');
+                showAlert('❌ Token invalide ou sans les permissions nécessaires', 'error');
             } else if (response.status === 404) {
-                showAlert('❌ Workflow non trouvé. Vérifiez que .github/workflows/add-event.yml existe.', 'error');
+                showAlert('❌ Workflow non trouvé. Vérifiez que .github/workflows/add-event.yml existe', 'error');
             } else {
-                showAlert(`❌ Erreur lors de l'ajout: ${response.status} ${response.statusText}`, 'error');
+                showAlert(`❌ Erreur: ${response.status} ${response.statusText}`, 'error');
             }
             return false;
         }
 
-        showAlert('✅ Événement ajouté! Le calendrier sera mis à jour dans quelques instants...', 'success');
+        showAlert('✅ Événement ajouté! Le calendrier sera mis à jour dans quelques instants', 'success');
         
-        // Recharger les événements après un délai pour laisser le temps au workflow de s'exécuter
         setTimeout(async () => {
-            await loadEventsFromRepo();
+            await loadEvents();
             showAlert('🔄 Calendrier mis à jour!', 'success');
         }, 5000);
         
@@ -321,9 +406,9 @@ async function addEvent(eventData) {
     }
 }
 
-// ============================================================
-// GESTION DU FORMULAIRE
-// ============================================================
+// ========================================
+// FORM HANDLING
+// ========================================
 
 function initEventForm() {
     const form = document.getElementById('eventForm');
@@ -338,14 +423,16 @@ function initEventForm() {
         
         const eventData = {
             date: document.getElementById('eventDate').value,
-            title: document.getElementById('eventTitle').value.trim(),
-            link: document.getElementById('eventLink').value.trim(),
+            name: document.getElementById('eventName').value.trim(),
+            time: document.getElementById('eventTime').value,
+            type: document.getElementById('eventType').value,
+            lieu: document.getElementById('eventLieu').value.trim(),
+            description: document.getElementById('eventDescription').value.trim(),
             image: document.getElementById('eventImage').value.trim(),
-            count: parseInt(document.getElementById('eventCount').value) || 1
+            link: document.getElementById('eventLink').value.trim()
         };
         
-        // Validation
-        if (!eventData.date || !eventData.title) {
+        if (!eventData.date || !eventData.name) {
             showAlert('❌ Veuillez remplir tous les champs obligatoires', 'error');
             submitBtn.disabled = false;
             submitBtn.textContent = '✨ Ajouter l\'événement';
@@ -355,11 +442,8 @@ function initEventForm() {
         const success = await addEvent(eventData);
         
         if (success) {
-            // Réinitialiser le formulaire
             form.reset();
-            // Remettre la date d'aujourd'hui par défaut
             document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('eventCount').value = 1;
         }
         
         submitBtn.disabled = false;
@@ -367,38 +451,32 @@ function initEventForm() {
     });
 }
 
-// ============================================================
-// INITIALISATION
-// ============================================================
+// ========================================
+// INITIALIZATION
+// ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initialisation de Sortez...');
+    console.log('Initialisation de SORTEZ...');
     
-    // Définir la date d'aujourd'hui par défaut
     const dateInput = document.getElementById('eventDate');
     if (dateInput) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
     
-    // Vérifier le statut du token
     checkTokenStatus();
-    
-    // Initialiser le formulaire
     initEventForm();
+    loadEvents();
     
-    // Charger les événements
-    loadEventsFromRepo();
-    
-    // Rafraîchir automatiquement toutes les 30 secondes
+    // Auto-refresh
     setInterval(() => {
-        loadEventsFromRepo();
-    }, 30000);
+        loadEvents();
+    }, 60000); // Every minute
     
-    console.log('✅ Sortez initialisé avec succès!');
+    console.log('✅ SORTEZ initialisé avec succès!');
 });
 
-// Exposer les fonctions nécessaires globalement
-window.checkTokenStatus = checkTokenStatus;
-window.toggleTokenConfig = toggleTokenConfig;
+// Expose global functions
+window.toggleAdmin = toggleAdmin;
 window.saveToken = saveToken;
 window.clearToken = clearToken;
+window.filterByMonth = filterByMonth;
