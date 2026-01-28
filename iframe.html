@@ -2,126 +2,252 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SORTEZ — Agenda</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SORTEZ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --color-1: #FF6B6B;
+            --color-2: #4ECDC4;
+            --color-3: #FFE66D;
+            --color-4: #95E1D3;
+            --color-5: #F38181;
+            --bg: #000000;
+            --text: #ffffff;
+            --text-muted: #aaaaaa;
+        }
+
+        html {
+            font-size: 18px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .header {
+            background: var(--bg);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 3px solid var(--color-1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .events-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .month-divider {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--color-1);
+        }
+
+        .month-divider:first-child {
+            margin-top: 0;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .event-item {
+            display: block;
+            padding: 1.5rem 1.25rem;
+            border-bottom: 1px solid #333;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .event-item:hover {
+            background: #1a1a1a;
+        }
+
+        .event-item:nth-child(5n+1) { border-left: 5px solid var(--color-1); }
+        .event-item:nth-child(5n+2) { border-left: 5px solid var(--color-2); }
+        .event-item:nth-child(5n+3) { border-left: 5px solid var(--color-3); }
+        .event-item:nth-child(5n+4) { border-left: 5px solid var(--color-4); }
+        .event-item:nth-child(5n+5) { border-left: 5px solid var(--color-5); }
+
+        .event-date-block {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-day {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .event-month-year {
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .event-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .event-type {
+            color: var(--color-2);
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .event-description {
+            margin-top: 0.75rem;
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .event-link-btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--color-1);
+            color: #000;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .event-day {
+                font-size: 2rem;
+            }
+
+            .event-title {
+                font-size: 1.3rem;
+            }
+
+            .month-divider {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
-<body class="iframe-mode">
-    <header class="site-header iframe-header">
-        <div class="header-container">
-            <h1 class="site-title">SORTEZ</h1>
-        </div>
+<body>
+    <header class="header">
+        <h1>SORTEZ</h1>
     </header>
-
-    <main class="main-content">
-        <div class="content-container">
-            <!-- Month Filter -->
-            <div class="month-filter" id="monthFilter"></div>
-
-            <!-- Events Grid -->
-            <div class="events-grid" id="eventsGrid">
-                <div class="loading">Chargement des événements...</div>
-            </div>
+    
+    <div class="events-container">
+        <div class="events-list" id="eventsList">
+            <div class="loading">Chargement des événements...</div>
         </div>
-    </main>
+    </div>
 
     <script>
-        const REPO_OWNER = 'comenottaris';
-        const REPO_NAME = 'Sortez';
         const MONTHS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 
                         'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
         const MONTHS_SHORT = ['JAN', 'FÉV', 'MAR', 'AVR', 'MAI', 'JUN', 
                               'JUL', 'AOÛ', 'SEP', 'OCT', 'NOV', 'DÉC'];
 
-        let allEvents = [];
-        let currentMonth = null;
-
         async function loadEvents() {
             try {
-                const response = await fetch('/data/events.json', {
+                const response = await fetch('data/events.json', {
                     cache: 'no-store',
                     headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
+                        'Cache-Control': 'no-cache'
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Fichier non trouvé');
-                }
+                if (!response.ok) throw new Error('Fichier non trouvé');
                 
-                allEvents = await response.json();
+                const events = await response.json();
                 
-                // Filter upcoming events
+                // Filtrer pour n'afficher que les événements à partir d'aujourd'hui
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
-                allEvents = allEvents.filter(event => {
+                const upcomingEvents = events.filter(event => {
                     const eventDate = new Date(event.date);
                     eventDate.setHours(0, 0, 0, 0);
                     return eventDate >= today;
                 });
                 
-                // Sort by date
-                allEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                // Trier par date
+                upcomingEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
                 
-                renderMonthFilter();
-                renderEvents(allEvents);
+                renderEvents(upcomingEvents);
             } catch (error) {
                 console.error('Erreur chargement événements:', error);
-                document.getElementById('eventsGrid').innerHTML = 
+                document.getElementById('eventsList').innerHTML = 
                     '<div class="loading">Aucun événement trouvé</div>';
             }
         }
 
-        function renderMonthFilter() {
-            const monthFilter = document.getElementById('monthFilter');
-            if (!monthFilter) return;
-
-            const monthsWithEvents = new Set();
-            allEvents.forEach(event => {
-                const date = new Date(event.date);
-                const key = `${date.getFullYear()}-${date.getMonth()}`;
-                monthsWithEvents.add(key);
-            });
-
-            let html = '<button class="month-btn active" onclick="filterByMonth(null)">Tous les mois</button>';
-            
-            Array.from(monthsWithEvents).sort().forEach(key => {
-                const [year, month] = key.split('-');
-                const monthName = MONTHS[parseInt(month)];
-                html += `<button class="month-btn" onclick="filterByMonth('${key}')">${monthName} ${year}</button>`;
-            });
-
-            monthFilter.innerHTML = html;
-        }
-
-        function filterByMonth(monthKey) {
-            currentMonth = monthKey;
-            
-            // Update active button
-            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-
-            if (!monthKey) {
-                renderEvents(allEvents);
-                return;
-            }
-
-            const [year, month] = monthKey.split('-');
-            const filtered = allEvents.filter(evt => {
-                const date = new Date(evt.date);
-                return date.getFullYear() == year && date.getMonth() == month;
-            });
-
-            renderEvents(filtered);
-        }
-
         function renderEvents(events) {
-            const grid = document.getElementById('eventsGrid');
+            const container = document.getElementById('eventsList');
             
             if (!events || events.length === 0) {
-                grid.innerHTML = '<div class="loading">Aucun événement à venir</div>';
+                container.innerHTML = '<div class="loading">Aucun événement à venir</div>';
                 return;
             }
 
@@ -132,53 +258,66 @@
                 const date = new Date(event.date);
                 const monthYear = `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
                 
+                // Ajouter un séparateur de mois
                 if (monthYear !== lastMonth) {
-                    if (lastMonth !== null) {
-                        html += '</div>'; // Close previous month section
-                    }
-                    html += `<h3 class="month-divider">${monthYear}</h3><div class="month-events">`;
+                    html += `<h2 class="month-divider">${monthYear}</h2>`;
                     lastMonth = monthYear;
                 }
 
                 html += renderEventCard(event);
             });
 
-            if (lastMonth !== null) {
-                html += '</div>'; // Close last month section
-            }
-
-            grid.innerHTML = html;
+            container.innerHTML = html;
         }
 
         function renderEventCard(event) {
             const date = new Date(event.date);
             const day = String(date.getDate()).padStart(2, '0');
             const month = MONTHS_SHORT[date.getMonth()];
+            const year = date.getFullYear();
+
+            // Détecter le titre (name ou title pour compatibilité)
+            const title = event.name || event.title || 'Sans titre';
             
+            // Détecter les propriétés
             const time = event.time || '';
-            const lieu = event.lieu || '';
             const type = event.type || '';
+            const lieu = event.lieu || '';
             const description = event.description || '';
-            const image = event.image || '';
             const link = event.link || '';
 
             const hasLink = link && link.trim() !== '';
             const tag = hasLink ? 'a' : 'div';
             const linkAttr = hasLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : '';
 
+            // Construction des métadonnées
+            let metaHtml = '';
+            if (time) metaHtml += `<span>🕐 ${escapeHtml(time)}</span>`;
+            if (type) metaHtml += `<span class="event-type">${escapeHtml(type)}</span>`;
+            if (lieu) metaHtml += `<span>📍 ${escapeHtml(lieu)}</span>`;
+
+            // Description
+            let descHtml = '';
+            if (description) {
+                descHtml = `<div class="event-description">${escapeHtml(description)}</div>`;
+            }
+
+            // Bouton lien
+            let linkBtn = '';
+            if (hasLink) {
+                linkBtn = `<span class="event-link-btn">→ Plus d'infos</span>`;
+            }
+
             return `
-                <${tag} class="event-card" ${linkAttr}>
-                    ${image ? `<div class="event-image" style="background-image: url('${escapeHtml(image)}')"></div>` : 
-                            '<div class="event-image event-image-placeholder"></div>'}
-                    <div class="event-content">
-                        <div class="event-date-badge">
-                            ${day}.${month.substring(0, 2)}${time ? `<span class="event-time">${escapeHtml(time)}</span>` : ''}
-                        </div>
-                        <h3 class="event-name">${escapeHtml(event.name || event.title)}</h3>
-                        ${type ? `<p class="event-type">${escapeHtml(type)}</p>` : ''}
-                        ${lieu ? `<p class="event-lieu">📍 ${escapeHtml(lieu)}</p>` : ''}
-                        ${description ? `<p class="event-description">${escapeHtml(description)}</p>` : ''}
+                <${tag} class="event-item" ${linkAttr}>
+                    <div class="event-date-block">
+                        <span class="event-day">${day}</span>
+                        <span class="event-month-year">${month} ${year}</span>
                     </div>
+                    <div class="event-title">${escapeHtml(title)}</div>
+                    ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
+                    ${descHtml}
+                    ${linkBtn}
                 </${tag}>
             `;
         }
@@ -190,9 +329,11 @@
             return div.innerHTML;
         }
 
-        // Initialize
+        // Chargement initial
         loadEvents();
-        setInterval(loadEvents, 60000); // Refresh every minute
+
+        // Rafraîchir toutes les minutes
+        setInterval(loadEvents, 60000);
     </script>
 </body>
 </html>
