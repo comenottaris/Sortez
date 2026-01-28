@@ -294,50 +294,54 @@
             container.innerHTML = html;
         }
 
-        function renderEventCard(event) {
-            const date = new Date(event.date);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = MONTHS_SHORT[date.getMonth()];
-            const year = date.getFullYear();
+      function renderEventCard(event) {
+    const date = new Date(event.date);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = MONTHS_SHORT[date.getMonth()];
+    const year = date.getFullYear();
 
-            // Détecter le titre (name ou title pour compatibilité)
-            const title = event.name || event.title || 'Sans titre';
-            
-            // Détecter les propriétés
-            const time = event.time || '';
-            const type = event.type || '';
-            const lieu = event.lieu || '';
-            const description = event.description || '';
-            const link = event.link || '';
+    const title = event.name || event.title || 'Sans titre';
 
-            const hasLink = link && link.trim() !== '';
-            const tag = hasLink ? 'a' : 'div';
-            const linkAttr = hasLink ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"` : '';
+    const time = event.time || '';
+    const type = event.type || '';
+    const lieu = event.lieu || '';
+    const description = event.description || '';
+    const link = event.link || '';
 
-            // Construction des métadonnées
-            let metaHtml = '';
-            if (time) metaHtml += `<span>🕐 ${escapeHtml(time)}</span>`;
-            if (type) metaHtml += `<span class="event-type">${escapeHtml(type)}</span>`;
-            if (lieu) metaHtml += `<span>📍 ${escapeHtml(lieu)}</span>`;
+    const hasLink = link && link.trim() !== '';
+    const tag = hasLink ? 'a' : 'div';
+    const linkAttr = hasLink
+        ? `href="${escapeHtml(link)}" target="_blank" rel="noopener"`
+        : '';
 
-            // Description
-            let descHtml = '';
-            if (description) {
-                descHtml = `<div class="event-description">${escapeHtml(description)}</div>`;
-            };
+    let metaHtml = '';
+    if (time) metaHtml += `<span>🕐 ${escapeHtml(time)}</span>`;
+    if (type) metaHtml += `<span class="event-type">${escapeHtml(type)}</span>`;
+    if (lieu) metaHtml += `<span>📍 ${escapeHtml(lieu)}</span>`;
 
-                 <${tag} class="event-item" ${linkAttr}>
-                    <div class="event-date-block">
-                        <span class="event-day">${day}</span>
-                        <span class="event-month-year">${month}</span>
-                    </div>
-                    <div class="event-title">${escapeHtml(title)}</div>
-                    ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
-                    ${descHtml}
-                    ${linkBtn}
-                </${tag}>
-            `;
-        }
+    let descHtml = '';
+    if (description) {
+        descHtml = `<div class="event-description">${escapeHtml(description)}</div>`;
+    }
+
+    let linkBtn = '';
+    if (hasLink) {
+        linkBtn = `<div class="event-link-btn">Voir l’événement</div>`;
+    }
+
+    return `
+        <${tag} class="event-item" ${linkAttr}>
+            <div class="event-date-block">
+                <span class="event-day">${day}</span>
+                <span class="event-month-year">${month} ${year}</span>
+            </div>
+            <div class="event-title">${escapeHtml(title)}</div>
+            ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
+            ${descHtml}
+            ${linkBtn}
+        </${tag}>
+    `;
+}
 
         function escapeHtml(text) {
             if (!text) return '';
