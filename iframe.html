@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SORTEZ</title>
     <style>
         * {
@@ -23,7 +23,7 @@
         }
 
         html {
-            font-size: 18px;
+            font-size: 20px; /* Augmenté de 18px à 20px */
         }
 
         body {
@@ -33,34 +33,41 @@
             min-height: 100vh;
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .header {
             background: var(--bg);
-            padding: 1.5rem 1rem;
+            padding: 2rem 1rem; /* Augmenté */
             text-align: center;
             border-bottom: 3px solid var(--color-1);
+            width: 100%;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 3rem; /* Augmenté de 2.5rem à 3rem */
             font-weight: 800;
             letter-spacing: 2px;
         }
 
         .events-container {
-            max-width: 1200px;
+            max-width: 900px; /* Réduit de 1200px pour mieux centrer */
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1.5rem; /* Augmenté */
+            width: 100%;
         }
 
         .month-divider {
-            font-size: 1.8rem;
+            font-size: 2.2rem; /* Augmenté de 1.8rem */
             font-weight: 700;
             text-transform: lowercase;
-            margin: 2rem 0 1.5rem 0;
+            margin: 2.5rem auto 1.5rem auto; /* Centré avec auto */
             padding-bottom: 0.75rem;
             border-bottom: 2px solid var(--color-1);
+            text-align: center; /* Centré */
+            max-width: 100%;
         }
 
         .month-divider:first-child {
@@ -71,68 +78,71 @@
             display: flex;
             flex-direction: column;
             gap: 0;
+            width: 100%;
         }
 
         .event-item {
             display: block;
-            padding: 1.5rem 1.25rem;
+            padding: 2rem 1.5rem; /* Augmenté */
             border-bottom: 1px solid #333;
             text-decoration: none;
             color: inherit;
             transition: background 0.15s ease;
             cursor: pointer;
+            width: 100%;
         }
 
         .event-item:hover {
             background: #1a1a1a;
         }
 
-        .event-item:nth-child(5n+1) { border-left: 5px solid var(--color-1); }
-        .event-item:nth-child(5n+2) { border-left: 5px solid var(--color-2); }
-        .event-item:nth-child(5n+3) { border-left: 5px solid var(--color-3); }
-        .event-item:nth-child(5n+4) { border-left: 5px solid var(--color-4); }
-        .event-item:nth-child(5n+5) { border-left: 5px solid var(--color-5); }
+        .event-item:nth-child(5n+1) { border-left: 6px solid var(--color-1); } /* Augmenté de 5px à 6px */
+        .event-item:nth-child(5n+2) { border-left: 6px solid var(--color-2); }
+        .event-item:nth-child(5n+3) { border-left: 6px solid var(--color-3); }
+        .event-item:nth-child(5n+4) { border-left: 6px solid var(--color-4); }
+        .event-item:nth-child(5n+5) { border-left: 6px solid var(--color-5); }
 
         .event-date-block {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
+            justify-content: flex-start; /* Aligné à gauche pour cohérence */
+            gap: 1rem; /* Augmenté */
+            margin-bottom: 1rem; /* Augmenté */
         }
 
         .event-day {
-            font-size: 2.5rem;
+            font-size: 3rem; /* Augmenté de 2.5rem à 3rem */
             font-weight: 800;
             line-height: 1;
         }
 
         .event-month-year {
-            font-size: 1rem;
+            font-size: 1.1rem; /* Augmenté de 1rem */
             text-transform: uppercase;
             color: var(--text-muted);
             letter-spacing: 1px;
         }
 
         .event-title {
-            font-size: 1.6rem;
+            font-size: 1.9rem; /* Augmenté de 1.6rem */
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem; /* Augmenté */
             line-height: 1.3;
         }
 
         .event-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.25rem;
-            font-size: 1rem;
+            gap: 1.5rem; /* Augmenté */
+            font-size: 1.1rem; /* Augmenté de 1rem */
             color: var(--text-muted);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem; /* Augmenté */
         }
 
         .event-meta span {
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.4rem;
         }
 
         .event-type {
@@ -142,21 +152,21 @@
         }
 
         .event-description {
-            margin-top: 0.75rem;
-            font-size: 1rem;
+            margin-top: 1rem; /* Augmenté */
+            font-size: 1.1rem; /* Augmenté de 1rem */
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.6; /* Augmenté */
         }
 
         .event-link-btn {
             display: inline-block;
-            margin-top: 0.75rem;
-            padding: 0.5rem 1rem;
+            margin-top: 1rem; /* Augmenté */
+            padding: 0.6rem 1.2rem; /* Augmenté */
             background: var(--color-1);
             color: #000;
             border-radius: 4px;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 1.05rem; /* Augmenté */
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -165,29 +175,47 @@
             text-align: center;
             padding: 4rem 2rem;
             color: var(--text-muted);
-            font-size: 1.2rem;
+            font-size: 1.4rem; /* Augmenté */
         }
 
-        /* Responsive */
+        /* Responsive - Encore plus gros sur mobile */
         @media (max-width: 768px) {
             html {
-                font-size: 16px;
+                font-size: 22px; /* Encore plus gros sur mobile */
             }
 
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.8rem; /* Ajusté pour mobile */
             }
 
             .event-day {
-                font-size: 2rem;
+                font-size: 2.8rem; /* Ajusté */
             }
 
             .event-title {
-                font-size: 1.3rem;
+                font-size: 1.7rem; /* Ajusté */
             }
 
             .month-divider {
-                font-size: 1.5rem;
+                font-size: 2rem; /* Ajusté */
+            }
+
+            .events-container {
+                padding: 2rem 1rem;
+            }
+
+            .event-item {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 20px; /* Taille de base pour très petits écrans */
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -211,7 +239,6 @@
 
         async function loadEvents() {
             try {
-                // URL absolue vers GitHub Pages
                 const response = await fetch('https://comenottaris.github.io/Sortez/data/events.json', {
                     cache: 'no-store',
                     headers: {
@@ -222,6 +249,7 @@
                 if (!response.ok) throw new Error('Fichier non trouvé');
                 
                 const events = await response.json();
+                console.log('Événements chargés:', events);
                 
                 // Filtrer pour n'afficher que les événements à partir d'aujourd'hui
                 const today = new Date();
