@@ -11,46 +11,94 @@ on:
 jobs:
   add-event:
     runs-on: ubuntu-latest
-
+    
     permissions:
       contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Ensure data directory exists
         run: mkdir -p data
 
-      - name: Append event to data/events.json
+      - name: Parse and validate event data
+        id: parse
         env:
-          PAYLOAD: "${{ github.event.inputs.payload }}"
+          PAYLOAD: ${{ github.event.inputs.payload }}
         run: |
-          FILE=data/events.json
-
-          # Créer le fichier temporaire avec le nouvel événement
+          echo "Parsing event payload..."
           echo "$PAYLOAD" > new_event.json
+          
+          # Validate JSON
+          if ! jq empty new_event.json 2>/dev/null; then
+            echo "❌ Invalid JSON payload"
+            exit 1
+          fi
+          
+          # Extract and validate required fields
+          DATE=$(jq -r '.date' new_event.json)
+          TITLE=$(jq -r '.title' new_event.json)
+          
+          if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
+            echo "❌ Missing required field: date"
+            exit 1
+          fi
+          
+          if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+            echo "❌ Missing required field: title"
+            exit 1
+          fi
+          
+          echo "✅ Event validated: $TITLE on $DATE"
+          echo "event_title=$TITLE" >> $GITHUB_OUTPUT
+          echo "event_date=$DATE" >> $GITHUB_OUTPUT
 
-          # Si le fichier existe, ajouter l'événement au tableau
-          if [ -f "$FILE" ]; then
-            jq '. += [input]' "$FILE" new_event.json > tmp.json
-          else
-            # Si le fichier n'existe pas, créer un nouveau tableau
-            jq '[input]' new_event.json > tmp.json
+      - name: Initialize events.json if needed
+        run: |
+          if [ ! -f data/events.json ]; then
+            echo "Creating new events.json file..."
+            echo '[]' > data/events.json
           fi
 
-          # Remplacer le fichier original
-          mv tmp.json "$FILE"
-
-          # Afficher le contenu pour debug
-          echo "Contenu de $FILE:"
-          cat "$FILE"
+      - name: Add event to events.json
+        run: |
+          echo "Adding event to events.json..."
+          
+          # Read existing events and add new one
+          jq '. += [input]' data/events.json new_event.json > temp.json
+          
+          # Sort events by date (most recent first)
+          jq 'sort_by(.date) | reverse' temp.json > data/events.json
+          
+          # Clean up
+          rm new_event.json temp.json
+          
+          echo "✅ Event added successfully"
+          echo "Total events: $(jq 'length' data/events.json)"
 
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           git add data/events.json
-          git commit -m "Add event via workflow [skip ci]" \
-            || echo "No changes to commit"
-          git push
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📅 Add event: ${{ steps.parse.outputs.event_title }} (${{ steps.parse.outputs.event_date }})"
+            git push
+            echo "✅ Changes pushed to repository"
+          fi
+
+      - name: Summary
+        run: |
+          echo "## 🎉 Event Added Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Title:** ${{ steps.parse.outputs.event_title }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** ${{ steps.parse.outputs.event_date }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The event has been added to \`data/events.json\` and will be visible on the calendar shortly." >> $GITHUB_STEP_SUMMARY
