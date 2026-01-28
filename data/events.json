@@ -1,11 +1,11 @@
 [
   {
     "id": 1,
-    "name": "ÃÂÃÂÃÂÃÂvÃÂÃÂÃÂÃÂ©nement Test",
+    "name": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂvÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©nement Test",
     "date": "2026-02-15",
     "time": "20:00",
     "lieu": "Paris, France",
-    "description": "Ceci est un ÃÂÃÂÃÂÃÂ©vÃÂÃÂÃÂÃÂ©nement de test pour vÃÂÃÂÃÂÃÂ©rifier que l'iframe fonctionne correctement.",
+    "description": "Ceci est un ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©vÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©nement de test pour vÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©rifier que l'iframe fonctionne correctement.",
     "link": "https://example.com"
   },
   {
@@ -15,16 +15,5 @@
     "link": "",
     "image": "",
     "created_at": "2026-01-28T00:45:01.514Z"
-  },
-  {
-    "date": "2026-01-28",
-    "name": "CarrÃÂÃÂ©ment ÃÂÃÂ§a marche",
-    "time": "",
-    "type": "",
-    "lieu": "",
-    "description": "",
-    "link": "",
-    "count": 1,
-    "created_at": "2026-01-28T08:08:31.443Z"
   }
 ]
