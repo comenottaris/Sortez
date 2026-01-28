@@ -211,7 +211,8 @@
 
         async function loadEvents() {
             try {
-                const response = await fetch('/sortez/data/events.json', {
+                // URL absolue vers GitHub Pages
+                const response = await fetch('https://comenottaris.github.io/Sortez/data/events.json', {
                     cache: 'no-store',
                     headers: {
                         'Cache-Control': 'no-cache'
