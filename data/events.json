@@ -23,7 +23,7 @@
   },
   {
     "date": "2026-02-06",
-    "name": "Commemor'action pour la journee mondiale de lutte contre le regime de mort aux frontieres",
+    "name": "Commemor'action de lutte contre le regime de mort aux frontieres",
     "time": "18:00",
     "type": "",
     "lieu": "Place de la Republique",
@@ -100,9 +100,9 @@
   }, 
    {
     "date": "2026-01-31",
-    "name": "Concert - Emma Kerssenbrock Alias Comtesse du Ghetto",
+    "name": "lEmma Kerssenbrock Alias Comtesse du Ghetto",
     "time": "18:00",
-    "type": "",
+    "type": "Concert",
     "lieu": "Shakirail",
     "description": "",
     "link": "https://shakirail.curry-vavart.com/concert-comtesse/",
