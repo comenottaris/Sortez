@@ -44,17 +44,6 @@
     "created_at": "2026-01-28T08:56:01.717Z"
   },
   {
-    "date": "2026-01-31",
-    "name": "Emma Kerssenbrock Alias Comtesse du Ghetto",
-    "time": "18:00",
-    "type": "Concert",
-    "lieu": "Shakirail",
-    "description": "",
-    "link": "https://shakirail.curry-vavart.com/concert-comtesse/",
-    "count": 1,
-    "created_at": "2026-01-28T10:19:38.870Z"
-  },
-  {
     "date": "2026-01-28",
     "name": "Manifestation en soutien au peuple kurde",
     "time": "19:00",
@@ -115,7 +104,7 @@
     "time": "14:00",
     "type": "",
     "lieu": "Shakirail",
-    "description": "14â¬/personne - initiation de 2h30",
+    "description": "14Ã¢ÂÂ¬/personne - initiation de 2h30",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
     "created_at": "2026-01-29T10:19:38.870Z"
@@ -125,7 +114,7 @@
     "name": "Projection - From Ground Zero",
     "time": "20:00",
     "type": "",
-    "lieu": "CinÃ©ma Luminor Hotel de Ville",
+    "lieu": "CinÃÂ©ma Luminor Hotel de Ville",
     "description": "Amnesty Film Festival",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
@@ -136,7 +125,7 @@
     "name": "Rediffusion IRL de la Cookie Collective Compilation [CCC]",
     "time": "19:00",
     "type": "",
-    "lieu": "cinÃ©ma la Clef. 34, rue Daubenton",
+    "lieu": "cinÃÂ©ma la Clef. 34, rue Daubenton",
     "description": "Amnesty Film Festival",
     "link": "https://www.instagram.com/p/DTsqgT2DFf9/",
     "count": 1,
