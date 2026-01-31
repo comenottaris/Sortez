@@ -58,6 +58,10 @@
         
         .event-date-block {
             margin-bottom: 1rem;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .event-day {
@@ -70,7 +74,6 @@
             font-size: 1.2rem;
             text-transform: uppercase;
             font-weight: normal;
-            margin-top: 0.3rem;
         }
         
         .event-title {
@@ -78,12 +81,17 @@
             font-weight: normal;
             margin: 1rem 0;
             line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         
         .event-meta {
             font-size: 1.1rem;
             margin: 0.8rem 0;
             font-weight: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
         .event-meta span {
@@ -96,6 +104,9 @@
             line-height: 1.4;
             margin-top: 1rem;
             font-weight: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
         
         .loading {
@@ -188,37 +199,49 @@
         const MONTHS = ['JANV.', 'FÉV.', 'MARS', 'AVR.', 'MAI', 'JUIN', 
                         'JUIL.', 'AOÛT', 'SEPT.', 'OCT.', 'NOV.', 'DÉC.'];
         
-        const COLORS = [
-            '#6f3460', '#4a354f', '#d20076', '#ff0076', '#fa448c', '#fec859',
-            '#43b5a0', '#491d88', '#331a38', '#c501e2', '#9a27f7', '#6664ff',
-            '#2b97fa', '#01c4e7', '#15e6cc', '#2ef8a0', '#67ff6b', '#c6e602',
-            '#e7c500', '#ffa300', '#cf0060', '#ff00ff', '#13a8fe', '#000117'
-        ];
+        // Générer 3 couleurs aléatoires au chargement de la page
+        let PAGE_COLORS = [];
         
-        // Fonction pour calculer la luminosité d'une couleur
-        function getLuminance(hex) {
-            // Convertir hex en RGB
-            const r = parseInt(hex.substr(1, 2), 16);
-            const g = parseInt(hex.substr(3, 2), 16);
-            const b = parseInt(hex.substr(5, 2), 16);
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 60 + Math.floor(Math.random() * 40); // 60-100%
+            const lightness = 40 + Math.floor(Math.random() * 30); // 40-70%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        function initializeColors() {
+            // Générer 3 couleurs proches (hues similaires)
+            const baseHue = Math.floor(Math.random() * 360);
             
-            // Formule de luminosité relative (ITU-R BT.709)
-            const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+            for (let i = 0; i < 3; i++) {
+                const hueVariation = (i * 40) + (Math.random() * 30 - 15); // Variation de ±15° autour de 40° d'écart
+                const hue = (baseHue + hueVariation) % 360;
+                const saturation = 60 + Math.floor(Math.random() * 40);
+                const lightness = 40 + Math.floor(Math.random() * 30);
+                PAGE_COLORS.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            }
+        }
+        
+        // Fonction pour calculer la luminosité d'une couleur HSL
+        function getLuminanceFromHSL(hslString) {
+            // Extraire h, s, l de la chaîne hsl(h, s%, l%)
+            const matches = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (!matches) return 0.5;
             
-            return luminance;
+            const lightness = parseInt(matches[3]);
+            // Approximation simple: lightness < 50 = sombre
+            return lightness / 100;
         }
         
         // Fonction pour obtenir la couleur de texte appropriée
         function getTextColor(bgColor) {
-            const luminance = getLuminance(bgColor);
-            // Si luminance > 0.5, fond clair → texte noir
-            // Si luminance <= 0.5, fond foncé → texte blanc
-            return luminance > 0.5 ? '#000' : '#fff';
+            const luminance = getLuminanceFromHSL(bgColor);
+            return luminance > 0.55 ? '#000' : '#fff';
         }
         
-        // Fonction pour obtenir une couleur aléatoire
-        function getRandomColor() {
-            return COLORS[Math.floor(Math.random() * COLORS.length)];
+        // Fonction pour obtenir une couleur de la rotation
+        function getColorForIndex(index) {
+            return PAGE_COLORS[index % 3];
         }
         
         async function loadEvents() {
@@ -256,13 +279,13 @@
             }
             
             let html = '';
-            events.forEach(event => {
-                html += renderEventCard(event);
+            events.forEach((event, index) => {
+                html += renderEventCard(event, index);
             });
             container.innerHTML = html;
         }
         
-        function renderEventCard(event) {
+        function renderEventCard(event, index) {
             const date = new Date(event.date);
             const day = String(date.getDate()).padStart(2, '0');
             const month = MONTHS[date.getMonth()];
@@ -274,8 +297,8 @@
             const description = event.description || '';
             const link = event.link || '';
             
-            // Générer une couleur aléatoire pour cet événement
-            const bgColor = getRandomColor();
+            // Obtenir la couleur selon l'index (rotation de 3 couleurs)
+            const bgColor = getColorForIndex(index);
             const textColor = getTextColor(bgColor);
             
             const hasLink = link && link.trim() !== '';
@@ -312,6 +335,8 @@
             return div.innerHTML;
         }
         
+        // Initialiser les couleurs au chargement
+        initializeColors();
         loadEvents();
         setInterval(loadEvents, 60000);
     </script>
