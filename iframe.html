@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,50 +11,43 @@
             font-weight: normal;
             font-style: normal;
         }
-        
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: 'BBB JURAge', Arial, sans-serif;
             font-weight: normal;
             background: #000;
-            color: #000;
             margin: 0;
             padding: 0;
         }
-        footer {
-            font-family: 'BBB JURAge', Arial, sans-serif;
-            font-weight: normal;
-            background: #000000;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
+
+        /* HEADER */
         .header {
             background: #000;
             padding: 1.5rem 1rem;
             text-align: center;
             border-bottom: 3px solid #c22727;
         }
-        
+
         .header h1 {
             font-size: 2.5rem;
             font-weight: normal;
             margin: 0;
             color: #fff;
         }
-        
+
+        /* EVENTS */
         .events-list {
             width: 100%;
             padding: 0;
             margin: 0;
         }
-        
+
         .event-item {
             display: block;
             width: 100%;
@@ -63,29 +55,33 @@
             text-decoration: none;
             text-align: center;
             border: none;
+            /* color set inline par JS */
         }
-        
+
+        .event-item *  {
+            color: inherit;
+        }
+
         .event-date-block {
             margin-bottom: 1rem;
             display: flex;
             align-items: baseline;
             justify-content: center;
             gap: 0.5rem;
-            color: #000;
         }
-        
+
         .event-day {
             font-size: 3rem;
             font-weight: normal;
             line-height: 1;
         }
-        
+
         .event-month-year {
             font-size: 1.2rem;
             text-transform: uppercase;
             font-weight: normal;
         }
-        
+
         .event-title {
             font-size: 1.8rem;
             font-weight: normal;
@@ -94,23 +90,21 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
-            color: #000;
         }
-        
+
         .event-meta {
             font-size: 1.1rem;
             margin: 0.8rem 0;
             font-weight: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            color: #000;
         }
-        
+
         .event-meta span {
             display: inline-block;
             margin: 0.3rem 0.5rem;
         }
-        
+
         .event-description {
             font-size: 1.3rem;
             line-height: 1.4;
@@ -119,83 +113,82 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
-            color: #000;
         }
-        
+
         .loading {
             text-align: center;
             padding: 3rem 1rem;
             color: #fff;
             font-size: 1.2rem;
         }
-        
-        /* Mobile */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .event-item {
-                padding: 1.5rem 1rem;
-            }
-            
-            .event-day {
-                font-size: 2.5rem;
-            }
-            
-            .event-month-year {
-                font-size: 1rem;
-            }
-            
-            .event-title {
-                font-size: 1.5rem;
-            }
-            
-            .event-meta {
-                font-size: 1rem;
-            }
-            
-            .event-description {
-                font-size: 1.1rem;
-            }
+
+        /* FOOTER */
+        .footer {
+            background: #000;
+            color: #fff !important;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            border-top: 1px solid #333;
+            font-family: Arial, sans-serif;
+            font-size: 0.85rem;
+            line-height: 1.7;
         }
-        
+
+        .footer * {
+            color: #fff !important;
+        }
+
+        .footer a {
+            color: #fff !important;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .footer .credit-site {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer .credit-font {
+            border-top: 1px solid #333;
+            padding-top: 1.2rem;
+            font-size: 0.78rem;
+            color: #aaa !important;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer .credit-font * {
+            color: #aaa !important;
+        }
+
+        .footer .credit-font a {
+            color: #fff !important;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .event-item { padding: 1.5rem 1rem; }
+            .event-day { font-size: 2.5rem; }
+            .event-month-year { font-size: 1rem; }
+            .event-title { font-size: 1.5rem; }
+            .event-meta { font-size: 1rem; }
+            .event-description { font-size: 1.1rem; }
+        }
+
         @media (max-width: 480px) {
-            .header {
-                padding: 1rem 0.5rem;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .event-item {
-                padding: 1.2rem 0.8rem;
-            }
-            
-            .event-day {
-                font-size: 2rem;
-            }
-            
-            .event-month-year {
-                font-size: 0.9rem;
-            }
-            
-            .event-title {
-                font-size: 1.3rem;
-            }
-            
-            .event-meta {
-                font-size: 0.9rem;
-            }
-            
-            .event-meta span {
-                margin: 0.2rem 0.3rem;
-            }
-            
-            .event-description {
-                font-size: 1rem;
-            }
+            .header { padding: 1rem 0.5rem; }
+            .header h1 { font-size: 1.8rem; }
+            .event-item { padding: 1.2rem 0.8rem; }
+            .event-day { font-size: 2rem; }
+            .event-month-year { font-size: 0.9rem; }
+            .event-title { font-size: 1.3rem; }
+            .event-meta { font-size: 0.9rem; }
+            .event-meta span { margin: 0.2rem 0.3rem; }
+            .event-description { font-size: 1rem; }
+            .footer { padding: 2rem 1rem; font-size: 0.8rem; }
+            .footer .credit-font { font-size: 0.72rem; }
         }
     </style>
 </head>
@@ -203,145 +196,120 @@
     <header class="header">
         <h1>¡GET OUT!</h1>
     </header>
-    
+
     <div class="events-list" id="eventsList">
         <div class="loading">Chargement des événements...</div>
     </div>
-    
+
     <footer class="footer">
-        <div class="footer"><br>Site géré par <a href="https://github.com/comenottaris" target="_blank">Côme Nottaris</a><br>
-           <br>Police utilisée : <strong>JURAge</strong> de la <a href="https://typotheque.genderfluid.space/fr" target="_blank">Typothèque genderfluid</a> <br>
-            Dessin réalisé d'après des caractères bois trouvés dans les fonds de l'imprimerie de La Fraternelle, Maison du Peuple à Saint-Claude (Jura).<br>
-            Ces caractères étaient utilisés pour le titrage de l'hebdomadaire <em>«Le Jura Socialiste»</em>, publié par la Fédération Socialiste du Jura au XXe siècle, 
-            jusqu'en 1947. <br>
-            La·e JURAge a été dessiné·e par Léna Salabert-Triby, Marouchka Payen et Sophie Vela en octobre 2025, dans le cadre de leur résidence à La Fraternelle. 
-            Les 42 glyphes post-binaires ont été fabriqués en bois et ajoutés à l'imprimerie.<br><br>
-    
+        <div class="credit-site">
+            Site géré par <a href="https://github.com/comenottaris" target="_blank">Côme Nottaris</a>
+        </div>
+        <div class="credit-font">
+            Police utilisée : <strong>JURAge</strong> de la <a href="https://typotheque.genderfluid.space/fr" target="_blank">Typothèque BBB</a><br><br>
+            Dessin réalisé d'après des caractères bois trouvés dans les fonds de l'imprimerie de La Fraternelle, Maison du Peuple à Saint-Claude (Jura).<br><br>
+            Ces caractères étaient utilisés pour le titrage de l'hebdomadaire <em>«Le Jura Socialiste»</em>, publié par la Fédération Socialiste du Jura au XXe siècle, jusqu'en 1947.<br><br>
+            La·e JURAge a été dessiné·e par Léna Salabert-Triby, Marouchka Payen et Sophie Vela en octobre 2025, dans le cadre de leur résidence à La Fraternelle.<br><br>
+            Les 42 glyphes post-binaires ont été fabriqués en bois et ajoutés à l'imprimerie.
         </div>
     </footer>
-    
+
     <script>
-        const MONTHS = ['JANV.', 'FÉV.', 'MARS', 'AVR.', 'MAI', 'JUIN', 
+        const MONTHS = ['JANV.', 'FÉV.', 'MARS', 'AVR.', 'MAI', 'JUIN',
                         'JUIL.', 'AOÛT', 'SEPT.', 'OCT.', 'NOV.', 'DÉC.'];
-        
-        // Générer 3 couleurs aléatoires au chargement de la page
+
         let PAGE_COLORS = [];
-        
-        function generateRandomColor() {
-            const hue = Math.floor(Math.random() * 360);
-            const saturation = 60 + Math.floor(Math.random() * 40); // 60-100%
-            const lightness = 40 + Math.floor(Math.random() * 30); // 40-70%
-            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        }
-        
+
         function initializeColors() {
-            // Générer 3 couleurs proches (hues similaires)
             const baseHue = Math.floor(Math.random() * 360);
-            
             for (let i = 0; i < 3; i++) {
-                const hueVariation = (i * 40) + (Math.random() * 30 - 15); // Variation de ±15° autour de 40° d'écart
-                const hue = (baseHue + hueVariation) % 360;
+                const hue = (baseHue + (i * 40) + (Math.random() * 30 - 15)) % 360;
                 const saturation = 60 + Math.floor(Math.random() * 40);
                 const lightness = 40 + Math.floor(Math.random() * 30);
                 PAGE_COLORS.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
             }
         }
-        
-        // Fonction pour calculer la luminosité d'une couleur HSL
+
         function getLuminanceFromHSL(hslString) {
-            // Extraire h, s, l de la chaîne hsl(h, s%, l%)
-            const matches = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            const matches = hslString.match(/hsl\(([^,]+),\s*([^%]+)%,\s*([^%]+)%\)/);
             if (!matches) return 0.5;
-            
-            const lightness = parseInt(matches[3]);
-            // Approximation simple: lightness < 50 = sombre
-            return lightness / 100;
+            return parseInt(matches[3]) / 100;
         }
-        
-        // Fonction pour obtenir la couleur de texte appropriée
+
         function getTextColor(bgColor) {
-            const luminance = getLuminanceFromHSL(bgColor);
-            return luminance > 0.55 ? '#000' : '#fff';
+            return getLuminanceFromHSL(bgColor) > 0.55 ? '#000000' : '#ffffff';
         }
-        
-        // Fonction pour obtenir une couleur de la rotation
-        function getColorForIndex(index) {
-            return PAGE_COLORS[index % 3];
-        }
-        
+
         async function loadEvents() {
             try {
                 const response = await fetch('https://comenottaris.github.io/Sortez/data/events.json', {
                     cache: 'no-store',
                     headers: {'Cache-Control': 'no-cache'}
                 });
-                
                 if (!response.ok) throw new Error('Fichier non trouvé');
-                
+
                 const events = await response.json();
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                
+
                 const upcomingEvents = events.filter(event => {
                     const eventDate = new Date(event.date);
                     eventDate.setHours(0, 0, 0, 0);
                     return eventDate >= today;
                 });
-                
+
                 upcomingEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
                 renderEvents(upcomingEvents);
             } catch (error) {
-                document.getElementById('eventsList').innerHTML = 
+                document.getElementById('eventsList').innerHTML =
                     '<div class="loading">Aucun événement trouvé</div>';
             }
         }
-        
+
         function renderEvents(events) {
             const container = document.getElementById('eventsList');
             if (!events || events.length === 0) {
                 container.innerHTML = '<div class="loading">Aucun événement à venir</div>';
                 return;
             }
-            
             let html = '';
             events.forEach((event, index) => {
                 html += renderEventCard(event, index);
             });
             container.innerHTML = html;
         }
-        
+
         function renderEventCard(event, index) {
             const date = new Date(event.date);
             const day = String(date.getDate()).padStart(2, '0');
             const month = MONTHS[date.getMonth()];
-            
+
             const title = event.name || event.title || 'Sans titre';
             const time = event.time || '';
             const type = event.type || '';
             const lieu = event.lieu || '';
             const description = event.description || '';
             const link = event.link || '';
-            
-            // Obtenir la couleur selon l'index (rotation de 3 couleurs)
-            const bgColor = getColorForIndex(index);
+
+            const bgColor = PAGE_COLORS[index % 3];
             const textColor = getTextColor(bgColor);
-            
+
             const hasLink = link && link.trim() !== '';
             const tag = hasLink ? 'a' : 'div';
             const linkAttr = hasLink ? `href="${esc(link)}" target="_blank" rel="noopener"` : '';
-            
+
             let metaHtml = '';
             if (time) metaHtml += `<span>🕐 ${esc(time)}</span>`;
             if (type) metaHtml += `<span>${esc(type)}</span>`;
             if (lieu) metaHtml += `<span>📍 ${esc(lieu)}</span>`;
-            
+
             let descHtml = '';
             if (description) {
                 descHtml = `<div class="event-description">${esc(description)}</div>`;
             }
-            
+
             return `
-                <${tag} class="event-item" ${linkAttr} style="background: ${bgColor}; color: ${textColor};">
+                <${tag} class="event-item" ${linkAttr} style="background:${bgColor};color:${textColor};">
                     <div class="event-date-block">
                         <div class="event-day">${day}</div>
                         <div class="event-month-year">${month}</div>
@@ -352,15 +320,14 @@
                 </${tag}>
             `;
         }
-        
+
         function esc(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-        
-        // Initialiser les couleurs au chargement
+
         initializeColors();
         loadEvents();
         setInterval(loadEvents, 60000);
