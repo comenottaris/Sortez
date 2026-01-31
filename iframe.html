@@ -5,36 +5,343 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡GET OUT!</title>
     <style>
+        @font-face {
+            font-family: 'BBB JURAge';
+            src: url('https://comenottaris.github.io/Sortez/BBB-JURAge.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
-        :root {
-            --color-1: #FF6B6B;
-            --color-2: #4ECDC4;
-            --color-3: #FFE66D;
-            --color-4: #95E1D3;
-            --color-5: #F38181;
-            --bg: #000000;
-            --text: #ffffff;
-            --text-muted: #222;
-        }
-
-        html {
-            font-size: 20px;
-        }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
+            font-family: 'BBB JURAge', Arial, sans-serif;
+            font-weight: normal;
+            background: #00000;
+            color: #00000;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background: #000;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 3px solid #00000;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: normal;
+            margin: 0;
+            color: #000000;
+        }
+        
+        .events-list {
+            width: 100%;
             padding: 0;
             margin: 0;
+        }
+        
+        .event-item {
+            display: block;
+            width: 100%;
+            padding: 2rem 1.5rem;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+        }
+        
+        .event-date-block {
+            margin-bottom: 1rem;
             display: flex;
-            flex-direction: column;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .event-day {
+            font-size: 3rem;
+            font-weight: normal;
+            line-height: 1;
+        }
+        
+        .event-month-year {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+        
+        .event-title {
+            font-size: 1.8rem;
+            font-weight: normal;
+            margin: 1rem 0;
+            line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .event-meta {
+            font-size: 1.1rem;
+            margin: 0.8rem 0;
+            font-weight: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .event-meta span {
+            display: inline-block;
+            margin: 0.3rem 0.5rem;
+        }
+        
+        .event-description {
+            font-size: 1.3rem;
+            line-height: 1.4;
+            margin-top: 1rem;
+            font-weight: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        
+        /* Mobile */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .event-item {
+                padding: 1.5rem 1rem;
+            }
+            
+            .event-day {
+                font-size: 2.5rem;
+            }
+            
+            .event-month-year {
+                font-size: 1rem;
+            }
+            
+            .event-title {
+                font-size: 1.5rem;
+            }
+            
+            .event-meta {
+                font-size: 1rem;
+            }
+            
+            .event-description {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem 0.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .event-item {
+                padding: 1.2rem 0.8rem;
+            }
+            
+            .event-day {
+                font-size: 2rem;
+            }
+            
+            .event-month-year {
+                font-size: 0.9rem;
+            }
+            
+            .event-title {
+                font-size: 1.3rem;
+            }
+            
+            .event-meta {
+                font-size: 0.9rem;
+            }
+            
+            .event-meta span {
+                margin: 0.2rem 0.3rem;
+            }
+            
+            .event-description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>¡GET OUT!</h1>
+    </header>
+    
+    <div class="events-list" id="eventsList">
+        <div class="loading">Chargement des événements...</div>
+    </div>
+    
+    <script>
+        const MONTHS = ['JANV.', 'FÉV.', 'MARS', 'AVR.', 'MAI', 'JUIN', 
+                        'JUIL.', 'AOÛT', 'SEPT.', 'OCT.', 'NOV.', 'DÉC.'];
+        
+        // Générer 3 couleurs aléatoires au chargement de la page
+        let PAGE_COLORS = [];
+        
+        function generateRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 60 + Math.floor(Math.random() * 40); // 60-100%
+            const lightness = 40 + Math.floor(Math.random() * 30); // 40-70%
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+        
+        function initializeColors() {
+            // Générer 3 couleurs proches (hues similaires)
+            const baseHue = Math.floor(Math.random() * 360);
+            
+            for (let i = 0; i < 3; i++) {
+                const hueVariation = (i * 40) + (Math.random() * 30 - 15); // Variation de ±15° autour de 40° d'écart
+                const hue = (baseHue + hueVariation) % 360;
+                const saturation = 60 + Math.floor(Math.random() * 40);
+                const lightness = 40 + Math.floor(Math.random() * 30);
+                PAGE_COLORS.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            }
+        }
+        
+        // Fonction pour calculer la luminosité d'une couleur HSL
+        function getLuminanceFromHSL(hslString) {
+            // Extraire h, s, l de la chaîne hsl(h, s%, l%)
+            const matches = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+            if (!matches) return 0.5;
+            
+            const lightness = parseInt(matches[3]);
+            // Approximation simple: lightness < 50 = sombre
+            return lightness / 100;
+        }
+        
+        // Fonction pour obtenir la couleur de texte appropriée
+        function getTextColor(bgColor) {
+            const luminance = getLuminanceFromHSL(bgColor);
+            return luminance > 0.55 ? '#000' : '#fff';
+        }
+        
+        // Fonction pour obtenir une couleur de la rotation
+        function getColorForIndex(index) {
+            return PAGE_COLORS[index % 3];
+        }
+        
+        async function loadEvents() {
+            try {
+                const response = await fetch('https://comenottaris.github.io/Sortez/data/events.json', {
+                    cache: 'no-store',
+                    headers: {'Cache-Control': 'no-cache'}
+                });
+                
+                if (!response.ok) throw new Error('Fichier non trouvé');
+                
+                const events = await response.json();
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const upcomingEvents = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate >= today;
+                });
+                
+                upcomingEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+                renderEvents(upcomingEvents);
+            } catch (error) {
+                document.getElementById('eventsList').innerHTML = 
+                    '<div class="loading">Aucun événement trouvé</div>';
+            }
+        }
+        
+        function renderEvents(events) {
+            const container = document.getElementById('eventsList');
+            if (!events || events.length === 0) {
+                container.innerHTML = '<div class="loading">Aucun événement à venir</div>';
+                return;
+            }
+            
+            let html = '';
+            events.forEach((event, index) => {
+                html += renderEventCard(event, index);
+            });
+            container.innerHTML = html;
+        }
+        
+        function renderEventCard(event, index) {
+            const date = new Date(event.date);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = MONTHS[date.getMonth()];
+            
+            const title = event.name || event.title || 'Sans titre';
+            const time = event.time || '';
+            const type = event.type || '';
+            const lieu = event.lieu || '';
+            const description = event.description || '';
+            const link = event.link || '';
+            
+            // Obtenir la couleur selon l'index (rotation de 3 couleurs)
+            const bgColor = getColorForIndex(index);
+            const textColor = getTextColor(bgColor);
+            
+            const hasLink = link && link.trim() !== '';
+            const tag = hasLink ? 'a' : 'div';
+            const linkAttr = hasLink ? `href="${esc(link)}" target="_blank" rel="noopener"` : '';
+            
+            let metaHtml = '';
+            if (time) metaHtml += `<span>🕐 ${esc(time)}</span>`;
+            if (type) metaHtml += `<span>${esc(type)}</span>`;
+            if (lieu) metaHtml += `<span>📍 ${esc(lieu)}</span>`;
+            
+            let descHtml = '';
+            if (description) {
+                descHtml = `<div class="event-description">${esc(description)}</div>`;
+            }
+            
+            return `
+                <${tag} class="event-item" ${linkAttr} style="background: ${bgColor}; color: ${textColor};">
+                    <div class="event-date-block">
+                        <div class="event-day">${day}</div>
+                        <div class="event-month-year">${month}</div>
+                    </div>
+                    <div class="event-title">${esc(title)}</div>
+                    ${metaHtml ? `<div class="event-meta">${metaHtml}</div>` : ''}
+                    ${descHtml}
+                </${tag}>
+            `;
+        }
+        
+        function esc(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialiser les couleurs au chargement
+        initializeColors();
+        loadEvents();
+        setInterval(loadEvents, 60000);
+    </script>
+</body>
+    </html>            flex-direction: column;
             align-items: center;
         }
 
