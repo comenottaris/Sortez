@@ -45,35 +45,9 @@
             width: 100%;
             padding: 2rem 1.5rem;
             text-decoration: none;
-            color: #000;
             text-align: center;
             border: none;
         }
-        
-        .event-item:nth-child(24n+1) { background: #6f3460; color: #fff; }
-        .event-item:nth-child(24n+2) { background: #4a354f; color: #fff; }
-        .event-item:nth-child(24n+3) { background: #d20076; color: #fff; }
-        .event-item:nth-child(24n+4) { background: #ff0076; color: #000; }
-        .event-item:nth-child(24n+5) { background: #fa448c; color: #000; }
-        .event-item:nth-child(24n+6) { background: #fec859; color: #000; }
-        .event-item:nth-child(24n+7) { background: #43b5a0; color: #000; }
-        .event-item:nth-child(24n+8) { background: #491d88; color: #fff; }
-        .event-item:nth-child(24n+9) { background: #331a38; color: #fff; }
-        .event-item:nth-child(24n+10) { background: #c501e2; color: #fff; }
-        .event-item:nth-child(24n+11) { background: #9a27f7; color: #fff; }
-        .event-item:nth-child(24n+12) { background: #6664ff; color: #000; }
-        .event-item:nth-child(24n+13) { background: #2b97fa; color: #000; }
-        .event-item:nth-child(24n+14) { background: #01c4e7; color: #000; }
-        .event-item:nth-child(24n+15) { background: #15e6cc; color: #000; }
-        .event-item:nth-child(24n+16) { background: #2ef8a0; color: #000; }
-        .event-item:nth-child(24n+17) { background: #67ff6b; color: #000; }
-        .event-item:nth-child(24n+18) { background: #c6e602; color: #000; }
-        .event-item:nth-child(24n+19) { background: #e7c500; color: #000; }
-        .event-item:nth-child(24n+20) { background: #ffa300; color: #000; }
-        .event-item:nth-child(24n+21) { background: #cf0060; color: #fff; }
-        .event-item:nth-child(24n+22) { background: #ff00ff; color: #000; }
-        .event-item:nth-child(24n+23) { background: #13a8fe; color: #000; }
-        .event-item:nth-child(24n+24) { background: #000117; color: #fff; }
         
         .event-date-block {
             margin-bottom: 1rem;
@@ -207,6 +181,39 @@
         const MONTHS = ['JANV.', 'FÉV.', 'MARS', 'AVR.', 'MAI', 'JUIN', 
                         'JUIL.', 'AOÛT', 'SEPT.', 'OCT.', 'NOV.', 'DÉC.'];
         
+        const COLORS = [
+            '#6f3460', '#4a354f', '#d20076', '#ff0076', '#fa448c', '#fec859',
+            '#43b5a0', '#491d88', '#331a38', '#c501e2', '#9a27f7', '#6664ff',
+            '#2b97fa', '#01c4e7', '#15e6cc', '#2ef8a0', '#67ff6b', '#c6e602',
+            '#e7c500', '#ffa300', '#cf0060', '#ff00ff', '#13a8fe', '#000117'
+        ];
+        
+        // Fonction pour calculer la luminosité d'une couleur
+        function getLuminance(hex) {
+            // Convertir hex en RGB
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+            
+            // Formule de luminosité relative (ITU-R BT.709)
+            const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+            
+            return luminance;
+        }
+        
+        // Fonction pour obtenir la couleur de texte appropriée
+        function getTextColor(bgColor) {
+            const luminance = getLuminance(bgColor);
+            // Si luminance > 0.5, fond clair → texte noir
+            // Si luminance <= 0.5, fond foncé → texte blanc
+            return luminance > 0.5 ? '#000' : '#fff';
+        }
+        
+        // Fonction pour obtenir une couleur aléatoire
+        function getRandomColor() {
+            return COLORS[Math.floor(Math.random() * COLORS.length)];
+        }
+        
         async function loadEvents() {
             try {
                 const response = await fetch('https://comenottaris.github.io/Sortez/data/events.json', {
@@ -260,6 +267,10 @@
             const description = event.description || '';
             const link = event.link || '';
             
+            // Générer une couleur aléatoire pour cet événement
+            const bgColor = getRandomColor();
+            const textColor = getTextColor(bgColor);
+            
             const hasLink = link && link.trim() !== '';
             const tag = hasLink ? 'a' : 'div';
             const linkAttr = hasLink ? `href="${esc(link)}" target="_blank" rel="noopener"` : '';
@@ -275,7 +286,7 @@
             }
             
             return `
-                <${tag} class="event-item" ${linkAttr}>
+                <${tag} class="event-item" ${linkAttr} style="background: ${bgColor}; color: ${textColor};">
                     <div class="event-date-block">
                         <div class="event-day">${day}</div>
                         <div class="event-month-year">${month}</div>
