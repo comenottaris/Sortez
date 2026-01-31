@@ -564,7 +564,7 @@
                 });
 
                 return `
-                    <div class="event-card" data-index="${index}">
+                    <div class="event-card" data-index="${index}" data-event-id="${event.date}-${event.name}">
                         <div class="event-header">
                             <div>
                                 <div class="event-title">${escapeHtml(event.name || event.title)}</div>
@@ -572,7 +572,7 @@
                             </div>
                             <div class="event-actions">
                                 <button class="btn btn-secondary btn-small" onclick="editEvent(${index})">✏️ Modifier</button>
-                                <button class="btn btn-danger btn-small" onclick="deleteEvent(${index})">🗑️ Supprimer</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteEvent(${index}, '${escapeHtml(event.name || event.title)}')">🗑️ Supprimer</button>
                             </div>
                         </div>
                         
@@ -647,7 +647,7 @@
         }
 
         // ========================================
-        // CRUD OPERATIONS
+        // CRUD OPERATIONS - SÉCURISÉES
         // ========================================
 
         async function addEvent(eventData) {
@@ -658,18 +658,38 @@
             }
 
             try {
-                // Get file
+                // Récupérer le fichier actuel
                 const fileResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
+                if (!fileResponse.ok) {
+                    throw new Error(`Échec récupération fichier (${fileResponse.status})`);
+                }
+                
                 const fileData = await fileResponse.json();
-                const currentContent = JSON.parse(atob(fileData.content));
+                let currentContent;
                 
-                // Add event
+                try {
+                    currentContent = JSON.parse(atob(fileData.content));
+                } catch (parseError) {
+                    throw new Error('Erreur parsing JSON - fichier corrompu');
+                }
+                
+                // Vérifier que c'est bien un tableau
+                if (!Array.isArray(currentContent)) {
+                    throw new Error('Le fichier events.json ne contient pas un tableau valide');
+                }
+                
+                // Sauvegarder l'état actuel avant modification
+                const backupContent = JSON.stringify(currentContent);
+                console.log('📦 Backup créé:', currentContent.length, 'événements');
+                
+                // Ajouter le nouvel événement
                 currentContent.push(eventData);
+                console.log('➕ Ajout événement. Total:', currentContent.length);
                 
-                // Commit
+                // Commit avec message clair
                 const updateResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
                     method: 'PUT',
                     headers: {
@@ -677,7 +697,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Add event: ${eventData.name}`,
+                        message: `Add event: ${eventData.name} (${eventData.date})`,
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(currentContent, null, 2)))),
                         sha: fileData.sha
                     })
@@ -685,14 +705,14 @@
 
                 if (!updateResponse.ok) {
                     const error = await updateResponse.text();
-                    throw new Error(`Erreur ${updateResponse.status}: ${error}`);
+                    throw new Error(`Erreur commit ${updateResponse.status}: ${error}`);
                 }
 
                 showAlert('✅ Événement ajouté! Rafraîchissement dans 3s...', 'success');
                 setTimeout(loadEvents, 3000);
                 return true;
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Erreur addEvent:', error);
                 showAlert('❌ Erreur: ' + error.message, 'error');
                 return false;
             }
@@ -706,13 +726,40 @@
             }
 
             try {
+                // Vérifier que l'index est valide
+                if (index < 0 || index >= allEvents.length) {
+                    throw new Error(`Index invalide: ${index} (total: ${allEvents.length})`);
+                }
+                
                 const fileResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                const fileData = await fileResponse.json();
-                const currentContent = JSON.parse(atob(fileData.content));
+                if (!fileResponse.ok) {
+                    throw new Error(`Échec récupération fichier (${fileResponse.status})`);
+                }
                 
+                const fileData = await fileResponse.json();
+                let currentContent;
+                
+                try {
+                    currentContent = JSON.parse(atob(fileData.content));
+                } catch (parseError) {
+                    throw new Error('Erreur parsing JSON');
+                }
+                
+                if (!Array.isArray(currentContent)) {
+                    throw new Error('Format fichier invalide');
+                }
+                
+                // Vérifier que l'événement existe toujours
+                if (index >= currentContent.length) {
+                    throw new Error(`L'événement n'existe plus (index ${index} > ${currentContent.length})`);
+                }
+                
+                console.log('📝 Modification événement index', index, ':', currentContent[index].name, '→', eventData.name);
+                
+                // Remplacer UNIQUEMENT l'événement à l'index spécifié
                 currentContent[index] = eventData;
                 
                 const updateResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
@@ -722,26 +769,32 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Update event: ${eventData.name}`,
+                        message: `Update event: ${eventData.name} (${eventData.date})`,
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(currentContent, null, 2)))),
                         sha: fileData.sha
                     })
                 });
 
-                if (!updateResponse.ok) throw new Error('Échec mise à jour');
+                if (!updateResponse.ok) {
+                    throw new Error(`Échec mise à jour (${updateResponse.status})`);
+                }
 
                 showAlert('✅ Événement modifié! Rafraîchissement...', 'success');
                 setTimeout(loadEvents, 2000);
                 return true;
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Erreur updateEvent:', error);
                 showAlert('❌ Erreur: ' + error.message, 'error');
                 return false;
             }
         }
 
-        async function deleteEvent(index) {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement?')) {
+        async function deleteEvent(index, eventName) {
+            // Double confirmation pour éviter suppressions accidentelles
+            const confirmMessage = `⚠️ ATTENTION ⚠️\n\nVoulez-vous vraiment supprimer l'événement :\n\n"${eventName}"\n\nCette action est IRRÉVERSIBLE.`;
+            
+            if (!confirm(confirmMessage)) {
+                console.log('🚫 Suppression annulée par l\'utilisateur');
                 return;
             }
 
@@ -752,15 +805,46 @@
             }
 
             try {
+                // Vérifier que l'index est valide
+                if (index < 0 || index >= allEvents.length) {
+                    throw new Error(`Index invalide: ${index} (total: ${allEvents.length})`);
+                }
+                
                 const fileResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                const fileData = await fileResponse.json();
-                const currentContent = JSON.parse(atob(fileData.content));
+                if (!fileResponse.ok) {
+                    throw new Error(`Échec récupération fichier (${fileResponse.status})`);
+                }
                 
-                const eventName = currentContent[index].name || currentContent[index].title;
+                const fileData = await fileResponse.json();
+                let currentContent;
+                
+                try {
+                    currentContent = JSON.parse(atob(fileData.content));
+                } catch (parseError) {
+                    throw new Error('Erreur parsing JSON');
+                }
+                
+                if (!Array.isArray(currentContent)) {
+                    throw new Error('Format fichier invalide');
+                }
+                
+                // Vérifier que l'événement existe toujours
+                if (index >= currentContent.length) {
+                    throw new Error(`L'événement n'existe plus (index ${index} > ${currentContent.length})`);
+                }
+                
+                // Récupérer les infos de l'événement à supprimer
+                const eventToDelete = currentContent[index];
+                console.log('🗑️ Suppression événement index', index, ':', eventToDelete.name);
+                console.log('📊 Avant suppression:', currentContent.length, 'événements');
+                
+                // Supprimer UNIQUEMENT l'événement à l'index spécifié
                 currentContent.splice(index, 1);
+                
+                console.log('📊 Après suppression:', currentContent.length, 'événements');
                 
                 const updateResponse = await fetch(`${API_BASE}/contents/data/events.json`, {
                     method: 'PUT',
@@ -769,32 +853,44 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Delete event: ${eventName}`,
+                        message: `Delete event: ${eventToDelete.name} (${eventToDelete.date})`,
                         content: btoa(unescape(encodeURIComponent(JSON.stringify(currentContent, null, 2)))),
                         sha: fileData.sha
                     })
                 });
 
-                if (!updateResponse.ok) throw new Error('Échec suppression');
+                if (!updateResponse.ok) {
+                    throw new Error(`Échec suppression (${updateResponse.status})`);
+                }
 
                 showAlert('✅ Événement supprimé! Rafraîchissement...', 'success');
                 setTimeout(loadEvents, 2000);
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Erreur deleteEvent:', error);
                 showAlert('❌ Erreur: ' + error.message, 'error');
             }
         }
 
         function editEvent(index) {
+            // Fermer tous les formulaires d'édition
             document.querySelectorAll('.edit-form').forEach(form => {
                 form.classList.remove('active');
             });
             
-            document.getElementById(`editForm${index}`).classList.add('active');
+            // Ouvrir le formulaire demandé
+            const editForm = document.getElementById(`editForm${index}`);
+            if (editForm) {
+                editForm.classList.add('active');
+                console.log('✏️ Mode édition activé pour index', index);
+            }
         }
 
         function cancelEdit(index) {
-            document.getElementById(`editForm${index}`).classList.remove('active');
+            const editForm = document.getElementById(`editForm${index}`);
+            if (editForm) {
+                editForm.classList.remove('active');
+                console.log('❌ Édition annulée pour index', index);
+            }
         }
 
         async function saveEdit(index) {
@@ -815,6 +911,7 @@
                 return;
             }
 
+            console.log('💾 Sauvegarde modifications pour index', index);
             await updateEvent(index, eventData);
         }
 
@@ -841,6 +938,7 @@
                 created_at: new Date().toISOString()
             };
             
+            console.log('📝 Création nouvel événement:', eventData.name);
             const success = await addEvent(eventData);
             
             if (success) {
@@ -857,6 +955,7 @@
         // ========================================
 
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Admin panel chargé');
             document.getElementById('eventDate').value = new Date().toISOString().split('T')[0];
             checkTokenStatus();
             loadEvents();
