@@ -152,5 +152,27 @@
     "link": "https://shotgun.live/events/vendredi-teuf-au-pmu-dj-set-pilier-de-bar-26-eme-edition",
     "count": 1,
     "created_at": "2026-01-31T11:23:25.135Z"
+  },
+  {
+    "date": "2026-02-04",
+    "name": "Voyage à Gaza - Piero Usberti",
+    "time": "20:00",
+    "type": "Projection",
+    "lieu": "Ground Control Gare de Lyon",
+    "description": "Festival Cine Palestine",
+    "link": "https://dice.fm/event/696fb4b7b7830b00017e50c6",
+    "count": 1,
+    "created_at": "2026-01-30T11:23:25.135Z"
+  },
+  {
+    "date": "2026-02-03",
+    "name": "TRAP MAFIA CLUB edition 2",
+    "time": "19:00",
+    "type": "Festival",
+    "lieu": "Le Zorba : 137 rue du faubourg du temple",
+    "description": "collaboration avec interflex237 - 1 DJ ET 10 TRAPPEURS - 19h-23h",
+    "link": "https://www.instagram.com/p/DUOZFo_AtWf/",
+    "count": 1,
+    "created_at": "2026-01-31T11:23:25.135Z"
   }
 ]
