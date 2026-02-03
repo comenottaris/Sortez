@@ -115,7 +115,7 @@
     "time": "14:00",
     "type": "",
     "lieu": "Shakirail",
-    "description": "14â¬/personne - initiation de 2h30",
+    "description": "14Ã¢ÂÂ¬/personne - initiation de 2h30",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
     "created_at": "2026-01-29T10:19:38.870Z"
@@ -125,7 +125,7 @@
     "name": "Projection - From Ground Zero",
     "time": "20:00",
     "type": "",
-    "lieu": "CinÃ©ma Luminor Hotel de Ville",
+    "lieu": "CinÃÂ©ma Luminor Hotel de Ville",
     "description": "Amnesty Film Festival",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
@@ -136,7 +136,7 @@
     "name": "Rediffusion IRL de la Cookie Collective Compilation [CCC]",
     "time": "19:00",
     "type": "",
-    "lieu": "cinÃ©ma la Clef. 34, rue Daubenton",
+    "lieu": "cinÃÂ©ma la Clef. 34, rue Daubenton",
     "description": "Amnesty Film Festival",
     "link": "https://www.instagram.com/p/DTsqgT2DFf9/",
     "count": 1,
@@ -144,18 +144,18 @@
   },
   {
     "date": "2026-02-01",
-    "name": "Hippoclup - dimanche décalé à l'hippodrome",
+    "name": "Hippoclup - dimanche dÃ©calÃ© Ã  l'hippodrome",
     "time": "14:00",
     "type": "Festival",
     "lieu": "Hippodrome de Boulogne",
-    "description": "6€",
+    "description": "6â¬",
     "link": "https://shotgun.live/events/vendredi-teuf-au-pmu-dj-set-pilier-de-bar-26-eme-edition",
     "count": 1,
     "created_at": "2026-01-31T11:23:25.135Z"
   },
   {
     "date": "2026-02-04",
-    "name": "Voyage à Gaza - Piero Usberti",
+    "name": "Voyage Ã  Gaza - Piero Usberti",
     "time": "20:00",
     "type": "Projection",
     "lieu": "Ground Control Gare de Lyon",
@@ -174,5 +174,16 @@
     "link": "https://www.instagram.com/p/DUOZFo_AtWf/",
     "count": 1,
     "created_at": "2026-01-31T11:23:25.135Z"
+  },
+  {
+    "date": "2026-02-06",
+    "name": "CHINGA LA MIGRA - Soiree fundraiser",
+    "time": "19:00",
+    "type": "",
+    "lieu": "DOC WORK - 26 rue du docteur Potain - 19eme",
+    "description": "Soiree de soutine pour les communautes ouvrieres a la frontiere US-Mexique\nBuffet (repas), Merch & tombola, Cine Club et boum.",
+    "link": "https://www.instagram.com/p/DUByrMFDJJz/",
+    "count": 1,
+    "created_at": "2026-02-03T16:46:49.469Z"
   }
 ]
