@@ -125,7 +125,7 @@
     "name": "Projection - From Ground Zero",
     "time": "20:00",
     "type": "",
-    "lieu": "CinÃÂÃÂ©ma Luminor Hotel de Ville",
+    "lieu": "CinÃÂÃÂÃÂÃÂ©ma Luminor Hotel de Ville",
     "description": "Amnesty Film Festival",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
@@ -136,7 +136,7 @@
     "name": "Rediffusion IRL de la Cookie Collective Compilation [CCC]",
     "time": "19:00",
     "type": "",
-    "lieu": "cinÃÂÃÂ©ma la Clef. 34, rue Daubenton",
+    "lieu": "cinÃÂÃÂÃÂÃÂ©ma la Clef. 34, rue Daubenton",
     "description": "Amnesty Film Festival",
     "link": "https://www.instagram.com/p/DTsqgT2DFf9/",
     "count": 1,
@@ -144,18 +144,18 @@
   },
   {
     "date": "2026-02-01",
-    "name": "Hippoclup - dimanche dÃÂ©calÃÂ© ÃÂ  l'hippodrome",
+    "name": "Hippoclup - dimanche dÃÂÃÂ©calÃÂÃÂ© ÃÂÃÂ  l'hippodrome",
     "time": "14:00",
     "type": "Festival",
     "lieu": "Hippodrome de Boulogne",
-    "description": "6Ã¢ÂÂ¬",
+    "description": "6ÃÂ¢ÃÂÃÂ¬",
     "link": "https://shotgun.live/events/vendredi-teuf-au-pmu-dj-set-pilier-de-bar-26-eme-edition",
     "count": 1,
     "created_at": "2026-01-31T11:23:25.135Z"
   },
   {
     "date": "2026-02-04",
-    "name": "Voyage ÃÂ  Gaza - Piero Usberti",
+    "name": "Voyage ÃÂÃÂ  Gaza - Piero Usberti",
     "time": "20:00",
     "type": "Projection",
     "lieu": "Ground Control Gare de Lyon",
@@ -192,9 +192,20 @@
     "time": "18:00",
     "type": "Festival",
     "lieu": "La parole errante, Montreuil",
-    "description": "7e festival des digitales, collectif d'écologies politiques. Du 20 au 22 fevrier.",
+    "description": "7e festival des digitales, collectif d'Ã©cologies politiques. Du 20 au 22 fevrier.",
     "link": "https://www.instagram.com/p/DUGkFT2DKJr",
     "count": 1,
     "created_at": "2026-02-03T17:30:23.883Z"
+  },
+  {
+    "date": "2026-02-04",
+    "name": "Expo photo - Nanna Strana -Fiora Garenzi",
+    "time": "18:30",
+    "type": "Exposition",
+    "lieu": "11 rue de Belzunce - 10eme",
+    "description": "Sur la Corse, ce que c'est qu'un chez soi.",
+    "link": "https://www.instagram.com/stories/fioragarenzi/",
+    "count": 1,
+    "created_at": "2026-02-04T10:15:50.928Z"
   }
 ]
