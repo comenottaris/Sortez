@@ -125,7 +125,7 @@
     "name": "Projection - From Ground Zero",
     "time": "20:00",
     "type": "",
-    "lieu": "CinÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ma Luminor Hotel de Ville",
+    "lieu": "CinÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ma Luminor Hotel de Ville",
     "description": "Amnesty Film Festival",
     "link": "https://shakirail.curry-vavart.com/initiation-electronique/",
     "count": 1,
@@ -136,7 +136,7 @@
     "name": "Rediffusion IRL de la Cookie Collective Compilation [CCC]",
     "time": "19:00",
     "type": "",
-    "lieu": "cinÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ma la Clef. 34, rue Daubenton",
+    "lieu": "cinÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ma la Clef. 34, rue Daubenton",
     "description": "Amnesty Film Festival",
     "link": "https://www.instagram.com/p/DTsqgT2DFf9/",
     "count": 1,
@@ -144,11 +144,11 @@
   },
   {
     "date": "2026-02-01",
-    "name": "Hippoclup - dimanche dÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©calÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ© ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  l'hippodrome",
+    "name": "Hippoclup - dimanche dÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©calÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ© ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  l'hippodrome",
     "time": "14:00",
     "type": "Festival",
     "lieu": "Hippodrome de Boulogne",
-    "description": "6ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬",
+    "description": "6ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬",
     "link": "https://shotgun.live/events/vendredi-teuf-au-pmu-dj-set-pilier-de-bar-26-eme-edition",
     "count": 1,
     "created_at": "2026-01-31T11:23:25.135Z"
@@ -192,7 +192,7 @@
     "time": "18:00",
     "type": "Festival",
     "lieu": "La parole errante, Montreuil",
-    "description": "7e festival des digitales, collectif d'ÃÂÃÂ©cologies politiques. Du 20 au 22 fevrier.",
+    "description": "7e festival des digitales, collectif d'ÃÂÃÂÃÂÃÂ©cologies politiques. Du 20 au 22 fevrier.",
     "link": "https://www.instagram.com/p/DUGkFT2DKJr",
     "count": 1,
     "created_at": "2026-02-03T17:30:23.883Z"
@@ -213,7 +213,7 @@
     "name": "Marche pour le Soudan",
     "time": "14:00",
     "type": "",
-    "lieu": "Place de la RÃ©publique",
+    "lieu": "Place de la RÃÂ©publique",
     "description": "Pour la paix au Soudan et tous les peuples affectes par la guerre",
     "link": "https://www.instagram.com/p/DUYkJE6AiMJ/",
     "count": 1,
@@ -225,9 +225,20 @@
     "time": "18:00",
     "type": "Rencontre",
     "lieu": "La Parole Errante - Montreuil",
-    "description": "Discussion autour du livre - Enfant de Palestine - précédée d’un iftar.",
+    "description": "Discussion autour du livre - Enfant de Palestine - prÃ©cÃ©dÃ©e dâun iftar.",
     "link": "https://paris-luttes.info/rencontre-avec-omar-alsoumi-et-20444?lang=fr",
     "count": 1,
     "created_at": "2026-02-10T09:51:10.633Z"
+  },
+  {
+    "date": "2026-02-17",
+    "name": "Réunion d’information pour connaître ses droits (logement)",
+    "time": "19:00",
+    "type": "",
+    "lieu": "DAL (29 av. Ledru Rollin - 12e)",
+    "description": "Réunion d’information pour connaître ses droits face à une expulsion, partager les conseils et les expériences de chacun.e…",
+    "link": "https://drive.proton.me/urls/YPXJTQKV3G#6j7XS2fFtrdv",
+    "count": 1,
+    "created_at": "2026-02-10T09:55:51.738Z"
   }
 ]
